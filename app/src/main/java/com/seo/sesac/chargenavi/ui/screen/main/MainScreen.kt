@@ -3,26 +3,26 @@ package com.seo.sesac.chargenavi.ui.screen.main
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Button
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.compose.CameraPositionState
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.Marker
@@ -56,7 +55,9 @@ import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.EvCsInfo
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * 시작 화면, 메인 화면
@@ -64,67 +65,58 @@ import kotlinx.coroutines.flow.collectLatest
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    navController: NavController,
-    viewModel: MainViewModel
-)
- {
+    navController: NavController, viewModel: MainViewModel
+) {
 
     val context = LocalContext.current
 
-     // Bottom Sheet Scaffold 상태
-     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
 
-     // coroutineScope
-     val scope = rememberCoroutineScope()
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
 
-     BottomSheetScaffold(
-         scaffoldState = bottomSheetScaffoldState,
-         sheetContent = {
-             // Todo: Bottom Sheet 내용
-             Text(text = "bottom sheet!")
-         }
-     ) { innerpadding ->
+        // NaverMap
+        NaverMapScreen(navController, viewModel, context)
 
-         Box(
-             modifier = Modifier
-                 .fillMaxSize()
-                 .padding(innerpadding)
-         ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    start = 10.dp, end = 10.dp, top = 10.dp
+                )
+        ) {
 
-             // NaverMap
-             NaverMapScreen(navController, viewModel, context)
-
-             Column(
-                 modifier = Modifier.padding(
-                         start = 10.dp, end = 10.dp, top = 10.dp
-                     )
-             ) {
-
-                 // 검색 창
-                 Row(
-                     modifier = Modifier.fillMaxWidth().background(
-                             color = Color.White, shape = RoundedCornerShape(8.dp)
-                         ).padding(
-                             vertical = 8.dp, horizontal = 8.dp
-                         ).clickable { // 클릭 시 검색 창으로 이동
-                             navController.navigate(NavigationRoute.Search.routeName)
-                         }, verticalAlignment = Alignment.CenterVertically
-                 ) { // 검색 아이콘
-                     Icon(
-                         imageVector = Icons.Filled.Search,
-                         contentDescription = stringResource(R.string.search_icon)
-                     )
-                     Text(
-                         text = stringResource(R.string.search_placeholder),
-                         fontSize = 15.sp,
-                         color = Color.LightGray
-                     )
-                 }
+            // 검색 창
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color.White, shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(
+                        vertical = 8.dp, horizontal = 8.dp
+                    )
+                    .clickable { // 클릭 시 검색 창으로 이동
+                        navController.navigate(NavigationRoute.Search.routeName)
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) { // 검색 아이콘
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = stringResource(R.string.search_icon)
+                )
+                Text(
+                    text = stringResource(R.string.search_placeholder),
+                    fontSize = 15.sp,
+                    color = Color.LightGray
+                )
+            }
 
 
-             }
-         }
-     }
+        }
+
+    }
+
 }
 
 /*
@@ -132,7 +124,11 @@ fun MainScreen(
 * */
 @OptIn(ExperimentalNaverMapApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun NaverMapScreen(navController: NavController, viewModel: MainViewModel, context: Context) {
+fun NaverMapScreen(
+    navController: NavController,
+    viewModel: MainViewModel,
+    context: Context,
+) {
 
     // 마커 리스트 상태 관리
     var markerStates by remember {
@@ -194,11 +190,9 @@ fun NaverMapScreen(navController: NavController, viewModel: MainViewModel, conte
     // Todo: Marker 클릭시 DetailBottomSheetScreen 띄우기
     // Naver Map Compose 사용하여 Naver Map 사용
     NaverMap(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         locationSource = rememberFusedLocationSource(isCompassEnabled = true),
-        uiSettings = MapUiSettings(
-            // location button 활성
+        uiSettings = MapUiSettings( // location button 활성
             isLocationButtonEnabled = true,
             isCompassEnabled = true
         ),
@@ -210,16 +204,14 @@ fun NaverMapScreen(navController: NavController, viewModel: MainViewModel, conte
 
         // 화면에 마커 표시
         markerStates.forEach { markerState ->
-            Marker(
-                state = markerState,
-                onClick = {
-                    val csId = viewModel.findCsIdByCoords(markerState.position)
-                    navController.navigate(
-                        "${NavigationRoute.Detail.routeName}/${csId}"
-                    )
-                    true
-                }
-            )
+            Marker(state = markerState, onClick = {
+                val csId = viewModel.findCsIdByCoords(markerState.position)
+                //                    navController.navigate(
+                //                        "${NavigationRoute.Detail.routeName}/${csId}"
+                //                    )
+
+                true
+            })
         }
 
     }
