@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -23,6 +24,9 @@ android {
         addManifestPlaceholders(mapOf("NAVER_CLIENT_ID" to getApiKey("NAVER_CLIENT_ID")))
 
         buildConfigField("String", "NAVER_CLIENT_SCERET", getApiKey("NAVER_CLIENT_SCERET"))
+
+        buildConfigField("String", "NAVER_OAUTH_CLIENT_ID", getApiKey("NAVER_OAUTH_CLIENT_ID"))
+        buildConfigField("String", "NAVER_OAUTH_CLIENT_SCERET", getApiKey("NAVER_OAUTH_CLIENT_SCERET"))
 
         buildConfigField("String", "API_KEY", getApiKey("API_KEY"))
 
@@ -61,8 +65,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
-    implementation(project(":data"))
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.firebase.firestore)
+    implementation(project(":FireStore"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,11 +76,21 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(project(":data"))
+
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.firestore.ktx)
+
     implementation(libs.play.services.location)
 
     // naver map compose
     implementation("io.github.fornewid:naver-map-compose:1.8.0")
     implementation("io.github.fornewid:naver-map-location:21.0.2")
+
+    // naver login
+    implementation(files("libs/oauth-5.10.0.aar"))
+    implementation("com.airbnb.android:lottie:3.1.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     // permission
     implementation("io.github.ParkSangGwon:tedpermission-normal:3.4.2")
