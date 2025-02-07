@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Favorite
@@ -63,12 +64,6 @@ fun DetailScreen(
 
     /** viewModel 에서 충전소 정보 가져오기 */
     LaunchedEffect(key1 = viewModel) {
-//        if (latitude != null && longitude != null) {
-//            viewModel.getEvCsInfo(latitude, longitude)?.let {
-//                csInfo = it
-//                Log.e("csInfo", "${csInfo}")
-//            }
-//        }
 
         if (csId != null) {
             Log.e("csId Detail", "${csId}")
@@ -86,11 +81,6 @@ fun DetailScreen(
     // 스크롤 상태
     val scrollState = rememberScrollState()
 
-    // 충전소 정보 임시
-//    val evInfo by remember {
-//        mutableStateOf(EvCsInfo("서울 청량리", "급속", 1, "충전기", "충전가능", "차데모", 1, "새싹 충전소", "1", "1", "1"))
-//    }
-
     //
     if (csInfo.isEmpty()) {
         CircularProgress()
@@ -105,8 +95,8 @@ fun DetailScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .horizontalScroll(scrollState),
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.Start,
             ) {
 
@@ -203,32 +193,11 @@ fun DetailScreen(
                             text = it
                         )
                     }
+
+                    HorizontalDivider(
+                        modifier = Modifier.dividerModifier()
+                    )
                 }
-
-                // 충전 단자
-                //            cpTpMap[csInfo.cpTp]?.let {
-                //                Text(
-                //                    text = it
-                //                )
-                //            }
-
-                // 충전 속도
-                //            chargeTpMap[csInfo.chargeTp]?.let {
-                //                Text(
-                //                    text = it
-                //                )
-                //            }
-
-                // 충전기 상태
-                //            cpStatMap[csInfo.cpStat]?.let {
-                //                Text(
-                //                    text = it
-                //                )
-                //            }
-
-                HorizontalDivider(
-                    modifier = Modifier.dividerModifier()
-                )
 
                 // 최근 리뷰 혹은 좋아요 가장 많은 리뷰 보이기
                 // firebase 에 연결하고 review 데이터 가져오면 구현
