@@ -7,32 +7,32 @@ import androidx.lifecycle.viewModelScope
 import com.seo.sesac.chargenavi.common.NaverOAuth
 import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
-import com.seo.sesac.firestore.datasource.firestore.UserDataSourceImpl
-import com.seo.sesac.firestore.repository.firestore.UserRepositoryImpl
+import com.seo.sesac.domain.usecase.UserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class UserViewModel(
-    private val userRepository: UserRepositoryImpl = UserRepositoryImpl(UserDataSourceImpl())
+//    private val userRepository: UserRepositoryImpl = UserRepositoryImpl(UserDataSourceImpl()),
+    private val userUseCase: UserUseCase
 ): ViewModel() {
     /** 유저 정보 */
     private val _userInfo =
         MutableStateFlow<FireResult<UserInfo>>(FireResult.DummyConstructor)
     val userInfo get() = _userInfo.asStateFlow()
 
-    fun getUserInfo(userId: String) {
+/*    fun getUserInfo(userId: String) {
         viewModelScope.launch {
             val result = userRepository.findById(userId)
 
             _userInfo.value = result
         }
-    }
+    }*/
 
     /**
      * naver login 메소드, 새로 로그인한 id면 유저 정보 저장
      * */
-    fun naverLogin(context: Context) {
+    fun loginNaver(context: Context) {
         NaverOAuth.login(context) { result ->
             viewModelScope.launch {
                 if (result.isSuccess) {
@@ -47,7 +47,8 @@ class UserViewModel(
 
                         Log.e("naverLogin in viewModel", "${loginUserInfo}")
 
-                        _userInfo.value = userRepository.create(loginUserInfo)
+//                        _userInfo.value = userRepository.create(loginUserInfo)
+                        _userInfo.value = userUseCase.loginNaverUserClass(loginUserInfo)
 
                     }
                 } else {

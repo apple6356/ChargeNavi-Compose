@@ -54,9 +54,6 @@ class MainViewModel(
         }
     }
 
-    fun csList() {
-    }
-
     /** 좌표 -> 주소 변환 */
     fun convertCoordsToAddress(latitude: Double, longitude: Double) {
         viewModelScope.launch {
