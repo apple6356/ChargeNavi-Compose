@@ -1,7 +1,7 @@
 package com.seo.sesac.data.entity
 
 data class Favorite(
-    val id: Long,
-    val csId: Int,
-    val userId: Long
+    val id: Long = -1,
+    val csId: Int = -1,
+    val userId: String = "default"
 )

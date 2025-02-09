@@ -40,11 +40,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.com.google.gms.google.services.gradle.plugin)
     implementation(libs.firebase.firestore)
-    implementation(project(":domain"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(project(":data"))
+    implementation(project(":domain"))
 
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.bom)

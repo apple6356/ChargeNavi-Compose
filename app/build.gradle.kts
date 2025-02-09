@@ -67,7 +67,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.firebase.firestore)
-    implementation(project(":FireStore"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,7 +75,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(project(":FireStore"))
 
     implementation(libs.firebase.bom)
     implementation(libs.firebase.firestore.ktx)

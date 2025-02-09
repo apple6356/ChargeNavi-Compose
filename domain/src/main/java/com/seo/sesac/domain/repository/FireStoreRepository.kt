@@ -1,4 +1,4 @@
-package com.seo.sesac.firestore.repository
+package com.seo.sesac.domain.repository
 
 import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
@@ -7,8 +7,8 @@ import com.seo.sesac.data.common.FireResult
  * repository interface
  * */
 interface FireStoreRepository<T> {
-    suspend fun create(data: T): FireResult<UserInfo>
-//    suspend fun delete(id: Long): Result<Boolean>
-//    suspend fun update(data: T): Result<Boolean>
+    suspend fun create(data: T): FireResult<T>
+    suspend fun delete(id: Long): FireResult<Boolean>
+    suspend fun update(data: T): FireResult<Boolean>
     suspend fun findById(id: String): FireResult<T>
 }

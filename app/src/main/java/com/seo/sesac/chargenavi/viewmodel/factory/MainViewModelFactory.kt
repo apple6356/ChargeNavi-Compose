@@ -10,12 +10,11 @@ import com.seo.sesac.data.repository.http.GeoCodeRepository
 class MainViewModelFactory(
     private val evCsRepository: EvCsRepository,
     private val geoCodeRepository: GeoCodeRepository
-//    private val locationRepository: LocationRepository
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(evCsRepository, geoCodeRepository/*, locationRepository*/) as T
+            return MainViewModel(evCsRepository, geoCodeRepository) as T
         }
         throw IllegalArgumentException("해당 뷰모델을 찾을수 없습니다")
     }
