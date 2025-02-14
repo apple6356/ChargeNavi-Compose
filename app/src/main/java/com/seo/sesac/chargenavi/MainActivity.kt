@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -17,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -34,33 +37,18 @@ import com.seo.sesac.chargenavi.ui.navigation.favoriteNavGraph
 import com.seo.sesac.chargenavi.ui.navigation.mainNavGraph
 import com.seo.sesac.chargenavi.ui.navigation.myPageNavGraph
 import com.seo.sesac.chargenavi.ui.screen.main.MainScreen
+import com.seo.sesac.chargenavi.ui.screen.main.NaverMapScreen
 import com.seo.sesac.chargenavi.ui.theme.ChargeNaviTheme
-import com.seo.sesac.chargenavi.viewmodel.MainViewModel
-import com.seo.sesac.chargenavi.viewmodel.factory.MainViewModelFactory
-import com.seo.sesac.data.apimodule.RetrofitClient
-import com.seo.sesac.data.datasource.http.EvCsDataSourceImpl
-import com.seo.sesac.data.datasource.http.GeoCodeDataSourceImpl
-import com.seo.sesac.data.repository.http.EvCsRepository
-import com.seo.sesac.data.repository.http.GeoCodeRepository
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val evCsRepository = EvCsRepository(EvCsDataSourceImpl(RetrofitClient.getRetrofitInstance()))
-        val geoCodeRepository = GeoCodeRepository(GeoCodeDataSourceImpl(RetrofitClient.getNaverGeoCodeInstance()))
-
-        val factory = MainViewModelFactory(evCsRepository, geoCodeRepository)
-
-        val mainViewModel: MainViewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
-
-        val db = Firebase.firestore
-
         checkMyAppPermissionList()
 
         enableEdgeToEdge()
         setContent {
-            StartApp(mainViewModel)
+            StartApp()
         }
     }
 
@@ -92,8 +80,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Preview
 @Composable
-fun StartApp(mainViewModel: MainViewModel) {
+fun StartApp() {
 
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -146,21 +135,23 @@ fun StartApp(mainViewModel: MainViewModel) {
                 }
             }
         ) { innerPadding ->
+
             NavHost(
                 navController = navController,
                 startDestination = NavigationRoute.Main.routeName, // 메인을 시작 탭으로 설정
                 modifier = Modifier.padding(paddingValues = innerPadding)
             ) {
                 composable(NavigationRoute.Main.routeName) {
-                    MainScreen(navController, mainViewModel)
+                    MainScreen(navController)
                 }
                 /**
                  * Navigation Graph 를 Custom 분할 함수
                  */
-                mainNavGraph(navController, mainViewModel)
+                mainNavGraph(navController)
                 favoriteNavGraph(navController)
                 myPageNavGraph(navController)
             }
+
         }
     }
 

@@ -14,12 +14,13 @@ jetbrainsKotlinJvm = "2.1.0"
 lifecycleViewmodelCompose = "2.8.7"
 appcompat = "1.7.0"
 material = "1.12.0"
-firebaseFirestoreKtx = "25.1.1"
+firebaseFirestoreKtx = "25.1.2"
 googlePlayServices = "4.4.2"
 comGoogleGmsGoogleServicesGradlePlugin = "4.4.2"
-firebaseBom = "33.8.0"
+firebaseBom = "33.9.0"
 firebaseCommon = "21.0.0"
-firebaseFirestore = "25.1.1"
+firebaseFirestore = "25.1.2"
+datastorePreferences = "1.1.2"
 
 
 [libraries]
@@ -47,6 +48,7 @@ com-google-gms-google-services-gradle-plugin = { group = "com.google.gms.google-
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-common = { group = "com.google.firebase", name = "firebase-common", version.ref = "firebaseCommon" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -18,7 +18,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/** Main 화면과 연관된 ViewModel */
+/**
+ * Main 화면과 연관된 ViewModel
+ * viewmodel 분리 해야 하는지?
+ * */
 class MainViewModel(
     private val evCsRepository: EvCsRepository,
     private val geoCodeRepository: GeoCodeRepository
@@ -29,28 +32,22 @@ class MainViewModel(
         MutableStateFlow<RestResult<MutableList<EvCsInfo>>>(RestResult.DummyConstructor)
     val evCsList get() = _evCsList.asStateFlow()
 
-
-    /** csId 별 충전소 정보 리스트 */
-//    private val _csList =
-//        MutableStateFlow<RestResult<MutableList<EvCsInfo>>>(RestResult.DummyConstructor)
-//    val csList get() = _csList.asStateFlow()
-
     /** 주소 정보 */
     private val _address =
         MutableStateFlow<RestResult<MutableList<ResultAddrInfo>>>(RestResult.DummyConstructor)
     val address get() = _address.asStateFlow()
 
     /** 좌표 정보 */
-    private val _coords =
+/*    private val _coords =
         MutableStateFlow<RestResult<MutableList<CoodrsAddress>>>(RestResult.DummyConstructor)
-    val coords get() = _coords.asStateFlow()
+    val coords get() = _coords.asStateFlow()*/
 
     /** 주소로 충전소 검색 후 충전소 목록 가져오는 함수 */
     fun getEvCsList(page: Int = 1, perPage: Int = 10, addr: String = "서울") {
         viewModelScope.launch {
             val response = evCsRepository.getEvCsList(page, perPage, addr, apiKey)
             _evCsList.value = RestResult.Success(response.data.toMutableList())
-            Log.e("evCsList", "${evCsList.value}")
+            Log.e("MVM evCsList", "${evCsList.value}")
         }
     }
 
@@ -63,18 +60,18 @@ class MainViewModel(
     }
 
     /** 주소 -> 좌표 변환 */
-    fun convertAddressToCoords(address: String) {
+/*    fun convertAddressToCoords(address: String) {
         viewModelScope.launch {
             val response = geoCodeRepository.addressToCoords(address, naverClientId, naverClientSecret)
             _coords.value = RestResult.Success(response.addresses.toMutableList())
         }
-    }
+    }*/
 
     /** 해당 좌표의 충전소 정보를 가져오는 함수 */
-    fun getEvCsInfo(latitude: String, longitude: String) =
+/*    fun getEvCsInfo(latitude: String, longitude: String) =
         (evCsList.value as RestResult.Success).data.find {
             it.latitude == latitude && it.longitude == longitude
-        }
+        }*/
 
     /** 해당 좌표의 csId 찾기 */
     fun findCsIdByCoords(position: LatLng) =
@@ -89,15 +86,18 @@ class MainViewModel(
     /** csId 가 같은 충전소 정보를 Map 으로 그룹화 */
     fun findCSByCsId(csId: String): Map<Int, List<EvCsInfo>> =
         evCsList.value.let { result ->
+            Log.e("MVM findCSByCsId", "$result")
             if (result is RestResult.Success) {
                 Log.e("Charging Station", "${result.data.groupBy { it.csId }}")
                 result.data
                     .groupBy { it.csId }
                     .filter { it.key == csId.toInt() }
             } else {
+                Log.e("MVM findCSByCsId", "오류 발생")
                 emptyMap()
             }
         }
+
 
 }
 

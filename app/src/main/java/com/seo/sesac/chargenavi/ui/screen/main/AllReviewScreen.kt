@@ -17,17 +17,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.ui.screen.main.List.ReviewListScreen
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
+import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 
 /**
  * 충전소의 모든 리뷰 보여주는 화면
  * */
 @Composable
-fun AllReviewScreen(navController: NavController, viewModel: MainViewModel) {
+fun AllReviewScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory),
+    csId: String
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -25,5 +25,5 @@ dependencyResolutionManagement {
 rootProject.name = "ChargeNavi"
 include(":app")
 include(":data")
-include(":FireStore")
+include(":data_android")
 include(":domain")

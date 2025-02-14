@@ -1,7 +1,6 @@
 package com.seo.sesac.chargenavi.ui.screen.main
 
 import android.util.Log
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.chargeTpMap
@@ -42,40 +42,70 @@ import com.seo.sesac.chargenavi.common.cpTpMap
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.ui.screen.common.CircularProgress
 import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
+import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
+import com.seo.sesac.chargenavi.viewmodel.UserViewModel
+import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
+import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
+import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.EvCsInfo
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 
 /**
  * 충전소에 대한 상세 정보 화면
- * 바텀 시트로 일부 정보 노출,
- * 바텀 시트 최대로 키우면 전체 화면,
- * 화면 내리면 다시 바텀 시트로 전환
  * */
 @Composable
 fun DetailScreen(
-    navController: NavController, viewModel: MainViewModel, csId: String?
+    navController: NavController,
+    mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory),
+    favoriteViewModel: FavoriteViewModel = viewModel(),
+    userViewModel: UserViewModel = viewModel(factory = userViewModelFactory),
+    csId: String
 ) {
 
-    /** 충전소 정보 */
+    // 충전소 정보
     var csInfo by remember {
         mutableStateOf<List<EvCsInfo>>(emptyList())
     }
 
     /** viewModel 에서 충전소 정보 가져오기 */
-    LaunchedEffect(key1 = viewModel) {
+    LaunchedEffect(key1 = mainViewModel.evCsList) {
+        if (mainViewModel.evCsList.value is RestResult.Success) {
 
-        if (csId != null) {
-            Log.e("csId Detail", "${csId}")
-            csInfo = viewModel.findCSByCsId(csId).values
-                .flatten() // flatten 을 사용해 여러 list 를 하나의 list 로 통합
-                .sortedBy { it.cpId } // cpId(충전기 Id) 순으로 정렬
+            Log.e("csId Detail", csId)
+            csInfo =
+                mainViewModel.findCSByCsId(csId).values.flatten() // flatten 을 사용해 여러 list 를 하나의 list 로 통합
+                    .sortedBy { it.cpId } // cpId(충전기 Id) 순으로 정렬
         }
     }
 
-    // 즐겨찾기 상태
+    // 유저 정보
+    var localUserInfo by remember {
+        mutableStateOf(Pair("", ""))
+    }
+
+    // 유저 정보 읽기
+    LaunchedEffect(key1 = userViewModel) {
+        userViewModel.getLocalUserInfo().collectLatest { (userId, nickname) ->
+            localUserInfo = Pair(userId, nickname)
+        }
+    }
+
+    // 즐겨찾기 상태 관리
     var favoriteState by remember {
         mutableStateOf(false)
+    }
+
+    // 즐겨찾기 상태 갱신
+    LaunchedEffect(key1 = localUserInfo) {
+        Log.e("DetailScreen", "localUserInfo: $localUserInfo , favoriteState $favoriteState")
+        val (userId, _) = localUserInfo
+        if (userId.isNotEmpty()) {
+            favoriteState = favoriteViewModel.isFavorite(localUserInfo.first, csId)
+            Log.e("DetailScreen", "즐겨찾기 상태: $favoriteState")
+        }
     }
 
     // 스크롤 상태
@@ -129,6 +159,14 @@ fun DetailScreen(
                     IconButton(
                         onClick = {
                             favoriteState = !favoriteState
+                            // 로그인 된 상태에서만 반응
+                            if (localUserInfo.first.isNotEmpty()) {
+                                if (favoriteState) {
+                                    favoriteViewModel.addFavorite(localUserInfo.first, csId)
+                                } else {
+                                    favoriteViewModel.deleteFavorite(localUserInfo.first, csId)
+                                }
+                            }
                         }
                     ) {
                         Icon(
@@ -162,41 +200,8 @@ fun DetailScreen(
                     )
                 }
 
-                HorizontalDivider(
-                    modifier = Modifier.dividerModifier()
-                )
-
                 csInfo.forEach { csInfo ->
-
-                    // 충전기 이름
-                    Text(
-                        text = csInfo.cpNm
-                    )
-
-                    // 충전 단자
-                    cpTpMap[csInfo.cpTp]?.let {
-                        Text(
-                            text = it
-                        )
-                    }
-
-                    // 충전 속도
-                    chargeTpMap[csInfo.chargeTp]?.let {
-                        Text(
-                            text = it
-                        )
-                    }
-
-                    // 충전기 상태
-                    cpStatMap[csInfo.cpStat]?.let {
-                        Text(
-                            text = it
-                        )
-                    }
-
-                    HorizontalDivider(
-                        modifier = Modifier.dividerModifier()
-                    )
+                    ChargeInfoItem(csInfo)
                 }
 
                 // 최근 리뷰 혹은 좋아요 가장 많은 리뷰 보이기
@@ -209,16 +214,18 @@ fun DetailScreen(
 
                 // navigation test button
                 Button(onClick = {
-                    navController.navigate(NavigationRoute.ReviewList.routeName)
+                    navController.navigate(
+                        "${NavigationRoute.ReviewList.routeName}/${csId}"
+                    )
                 }) {
-                    Text(text = "리뷰 목록 화면 이동")
+                    Text(text = "리뷰 더보기")
                 }
 
 
                 Button(onClick = {
                     navController.navigate(NavigationRoute.ReviewWrite.routeName)
                 }) {
-                    Text(text = "리뷰 작성 화면 이동")
+                    Text(text = "리뷰 작성")
                 }
             }
 

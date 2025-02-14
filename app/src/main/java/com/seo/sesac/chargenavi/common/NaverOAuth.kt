@@ -8,6 +8,7 @@ import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfile
 import com.navercorp.nid.profile.data.NidProfileResponse
+import com.seo.domain.entity.UserInfo
 
 /**
  * Naver Login 위한 파일
@@ -81,11 +82,20 @@ object NaverOAuth {
         NaverIdLoginSDK.logout()
     }
 
-    fun getProfile(onSuccess: (NidProfile?) -> Unit) {
+    fun getProfile(onSuccess: (UserInfo?) -> Unit) {
         NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
             override fun onSuccess(result: NidProfileResponse) {
-                val userInfo = result.profile
+                val profile = result.profile
 
+                var userInfo = UserInfo()
+
+                if (profile != null) {
+                     userInfo = UserInfo(
+                        id = profile.id,
+                        nickname = profile.nickname,
+                        profileImage = profile.profileImage
+                    )
+                }
                 onSuccess(userInfo)
             }
             override fun onFailure(httpStatus: Int, message: String) {
