@@ -19,7 +19,7 @@ import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 /**
  * viewModel 추가
  * */
-fun NavGraphBuilder.mainNavGraph(navController: NavController, viewModel: MainViewModel) {
+fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
     navigation(
         startDestination = NavigationRoute.Main.routeName,
@@ -27,24 +27,29 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController, viewModel: MainVi
     ) {
         /* 메인 화면 */
         composable(route = NavigationRoute.Main.routeName) {
-            MainScreen(navController, viewModel)
+            MainScreen(navController)
         }
         /* 충전소 상세 화면, 충전소 id를 넘긴다 */
         composable(route = "${NavigationRoute.Detail.routeName}/{csId}") {
             val csId = it.arguments?.getString("csId")
-            DetailScreen(navController, viewModel, csId)
+            if (csId != null) {
+                DetailScreen(navController, csId = csId)
+            }
         }
         /* 검색 화면 */
         composable(route = NavigationRoute.Search.routeName) {
-            SearchScreen(navController, viewModel)
+            SearchScreen(navController)
         }
         /* 리뷰 목록 화면 */
-        composable(route = NavigationRoute.ReviewList.routeName) {
-            AllReviewScreen(navController, viewModel)
+        composable(route = "${NavigationRoute.ReviewList.routeName}/{csId}") {
+            val csId = it.arguments?.getString("csId")
+            if (csId != null) {
+                AllReviewScreen(navController, csId = csId)
+            }
         }
         /* 리뷰 작성 화면 */
         composable(route = NavigationRoute.ReviewWrite.routeName) {
-            ReviewWriteScreen(navController, viewModel)
+            ReviewWriteScreen(navController)
         }
     }
 }

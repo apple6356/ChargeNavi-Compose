@@ -1,10 +1,8 @@
 package com.seo.sesac.chargenavi.ui.screen.favorite.list
 
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,17 +25,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
+import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
+import com.seo.sesac.chargenavi.viewmodel.MainViewModel
+import com.seo.sesac.chargenavi.viewmodel.UserViewModel
+import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
+import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
+import com.seo.sesac.data.entity.EvCsInfo
+import com.seo.domain.entity.Favorite
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * 즐겨찾기한 충전소 리스트
  * */
 @Composable
-fun FavoriteListScreen(favoriteList: MutableList<String>) {
+fun FavoriteListScreen(
+    favoriteList: List<Favorite>,
+    favoriteViewModel: FavoriteViewModel = viewModel(),
+    userViewModel: UserViewModel = viewModel(factory = userViewModelFactory),
+    mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory)
+) {
+
+    // 유저 정보
+    var localUserInfo by remember {
+        mutableStateOf(Pair("", ""))
+    }
+
+    // 유저 정보 읽기
+    LaunchedEffect(key1 = userViewModel) {
+        userViewModel.getLocalUserInfo().collectLatest { (userId, nickname) ->
+            localUserInfo = Pair(userId, nickname)
+        }
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -46,11 +69,30 @@ fun FavoriteListScreen(favoriteList: MutableList<String>) {
                 shape = RoundedCornerShape(10.dp)
             )
     ) {
-        items(favoriteList) { evInfo ->
+        items(favoriteList) { favoriteInfo ->
 
-            // 즐겨찾기 상태
+            // 즐겨찾기 상태, 기본 true
             var favoriteState by remember {
-                mutableStateOf(false)
+                mutableStateOf(true)
+            }
+
+            // 즐겨찾기 상태 갱신
+            LaunchedEffect(key1 = localUserInfo) {
+                Log.e("FavoriteListScreen", "localUserInfo: $localUserInfo , favoriteState $favoriteState")
+                val (userId, _) = localUserInfo
+                if (userId.isNotEmpty()) {
+                    favoriteState = favoriteViewModel.isFavorite(localUserInfo.first, favoriteInfo.csId)
+                    Log.e("FavoriteListScreen", "즐겨찾기 상태: $favoriteState")
+                }
+            }
+
+            // 즐겨찾기 된 충전소 정보
+            var evInfo by remember {
+                mutableStateOf(EvCsInfo)
+            }
+
+            LaunchedEffect(key1 = favoriteInfo) {
+
             }
 
             // 충전소 정보
@@ -103,7 +145,6 @@ fun FavoriteListScreen(favoriteList: MutableList<String>) {
             HorizontalDivider(
                 modifier = Modifier.dividerModifier()
             )
-
         }
     }
 

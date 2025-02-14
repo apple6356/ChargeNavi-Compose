@@ -1,6 +1,7 @@
 package com.seo.sesac.chargenavi.common
 
-import com.seo.sesac.data.entity.UserInfo
+import com.seo.domain.entity.UserInfo
+
 
 /**
  * 앱 전역에서 유저 정보를 관리할 수 있는 객체

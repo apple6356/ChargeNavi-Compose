@@ -27,15 +27,20 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
+import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 
 /**
  * 리뷰 작성 화면
  * */
 @Composable
-fun ReviewWriteScreen(navController: NavController, viewModel: MainViewModel) {
+fun ReviewWriteScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory)
+) {
 
     var reviewContent by remember {
         mutableStateOf("")

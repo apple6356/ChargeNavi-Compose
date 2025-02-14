@@ -26,10 +26,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.ui.screen.main.List.SearchListScreen
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
+import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 
 /**
  * 검색 화면,
@@ -38,7 +40,10 @@ import com.seo.sesac.chargenavi.viewmodel.MainViewModel
  * 3. 검색 결과가 없다면 검색 결과가 없다는 것을 알림
  * */
 @Composable
-fun SearchScreen(navController: NavController, viewModel: MainViewModel) {
+fun SearchScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory)
+) {
 
     // 검색 키워드
     var searchKeyword by remember {

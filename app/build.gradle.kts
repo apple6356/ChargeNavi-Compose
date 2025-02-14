@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.seo.sesac.chargenavi"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.firebase.firestore)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(project(":data_android"))
+    implementation(project(":domain"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -75,9 +78,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(project(":domain"))
     implementation(project(":data"))
-    implementation(project(":FireStore"))
 
     implementation(libs.firebase.bom)
     implementation(libs.firebase.firestore.ktx)
