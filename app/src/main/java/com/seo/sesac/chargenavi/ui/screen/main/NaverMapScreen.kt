@@ -1,9 +1,23 @@
 package com.seo.sesac.chargenavi.ui.screen.main
 
 import android.content.Context
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -11,7 +25,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -20,10 +37,14 @@ import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.Marker
+import com.naver.maps.map.compose.MarkerComposable
+import com.naver.maps.map.compose.MarkerDefaults
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.compose.rememberFusedLocationSource
+import com.naver.maps.map.overlay.OverlayImage
+import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.LocationUtils
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
@@ -45,7 +66,7 @@ fun NaverMapScreen(
 ) {
 
     // 마커 리스트 상태 관리
-    var markerStates by remember {
+    var markerStates by rememberSaveable {
         mutableStateOf<List<MarkerState>>(emptyList())
     }
 
@@ -83,7 +104,8 @@ fun NaverMapScreen(
                 val location = result.data.firstOrNull()
 
                 if (location != null) {
-                    mainViewModel.getEvCsList(addr = location.region.area2.name.trim())
+                    Log.e("addr area1", location.region.area1.name)
+                    mainViewModel.getEvCsList(addr = location.region.area1.name.trim())
                 } else {
                     showToast("검색 결과가 없습니다.")
                 }
@@ -100,8 +122,6 @@ fun NaverMapScreen(
         }
     }
 
-    // Todo: SearchScreen 에서 검색 시 검색 키워드를 기반으로 카메라 업데이트
-    // Todo: Marker 클릭시 DetailBottomSheetScreen 띄우기
     // Naver Map Compose 사용하여 Naver Map 사용
     NaverMap(
         modifier = Modifier.fillMaxSize(),
@@ -118,14 +138,33 @@ fun NaverMapScreen(
 
         // 화면에 마커 표시
         markerStates.forEach { markerState ->
-            Marker(state = markerState, onClick = {
-                val csId = mainViewModel.findCsIdByCoords(markerState.position)
-                navController.navigate(
-                    "${NavigationRoute.Detail.routeName}/${csId}"
-                )
+            MarkerComposable(state = markerState,
+                onClick = {
+                    val csId = mainViewModel.findCsIdByCoords(markerState.position)
+                    navController.navigate(
+                        "${NavigationRoute.Detail.routeName}/${csId}"
+                    )
 
-                true
-            })
+                    true
+                }
+            ) { // 마커 이미지 추가
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(5.dp)
+                        .size(20.dp)
+                        .background(Color.Cyan, CircleShape),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon( // 충전소 마커 아이콘
+                        modifier = Modifier,
+                        painter = painterResource(R.drawable.marker_cs_image),
+                        contentDescription = "충전소 마커"
+                    )
+                }
+            }
+
         }
 
     }

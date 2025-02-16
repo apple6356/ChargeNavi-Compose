@@ -1,14 +1,12 @@
 package com.seo.sesac.chargenavi.common
 
 import android.content.Context
-import android.util.Log
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
-import com.navercorp.nid.profile.data.NidProfile
 import com.navercorp.nid.profile.data.NidProfileResponse
-import com.seo.domain.entity.UserInfo
+import com.seo.sesac.data.entity.UserInfo
 
 /**
  * Naver Login 위한 파일

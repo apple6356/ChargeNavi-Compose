@@ -2,8 +2,7 @@ package com.seo.sesac.firestore.datasource.firestore
 
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.firestore.common.FirestoreCollectionFilter
-import com.seo.domain.datasource.UserDataSource
-import com.seo.domain.entity.UserInfo
+import com.seo.sesac.data.entity.UserInfo
 import kotlinx.coroutines.tasks.await
 
 /**

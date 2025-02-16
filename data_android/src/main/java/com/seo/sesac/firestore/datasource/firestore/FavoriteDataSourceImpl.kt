@@ -1,7 +1,7 @@
 package com.seo.sesac.firestore.datasource.firestore
 
 import com.seo.sesac.data.common.FireResult
-import com.seo.domain.entity.Favorite
+import com.seo.sesac.data.entity.Favorite
 import com.seo.domain.datasource.FavoriteDataSource
 import com.seo.sesac.firestore.common.FirestoreCollectionFilter
 import kotlinx.coroutines.tasks.await
@@ -9,7 +9,7 @@ import kotlinx.coroutines.tasks.await
 /**
  * firestore favorite datasource
  * */
-class FavoriteDataSourceImpl: com.seo.domain.datasource.FavoriteDataSource<Favorite> {
+class FavoriteDataSourceImpl: FavoriteDataSource<Favorite> {
 
     /**
      * 즐겨찾기 추가
@@ -44,10 +44,6 @@ class FavoriteDataSourceImpl: com.seo.domain.datasource.FavoriteDataSource<Favor
         FireResult.Failure(Exception("즐겨찾기 삭제 중 오류 발생"))
     }
 
-    override suspend fun update(data: Favorite): FireResult<Boolean> {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun findById(id: String): Favorite {
         val resultTask =
             FirestoreCollectionFilter.getFavoriteFirestoreCollection().whereEqualTo("id", id).limit(1).get().await()
@@ -60,7 +56,8 @@ class FavoriteDataSourceImpl: com.seo.domain.datasource.FavoriteDataSource<Favor
     }
 
     suspend fun findByUserId(userId: String): FireResult<MutableList<Favorite>> = runCatching {
-        val resultTask =  FirestoreCollectionFilter.getFavoriteFirestoreCollection().whereEqualTo("userId", userId).get().await()
+        val resultTask =  FirestoreCollectionFilter.getFavoriteFirestoreCollection()
+            .whereEqualTo("userId", userId).get().await()
 
         if (!resultTask.isEmpty) {
             val favoriteList = resultTask.toObjects(Favorite::class.java) as MutableList<Favorite>

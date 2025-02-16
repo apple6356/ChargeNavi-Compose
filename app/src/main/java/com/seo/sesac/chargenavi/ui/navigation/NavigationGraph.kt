@@ -48,8 +48,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             }
         }
         /* 리뷰 작성 화면 */
-        composable(route = NavigationRoute.ReviewWrite.routeName) {
-            ReviewWriteScreen(navController)
+        composable(route = "${NavigationRoute.ReviewWrite.routeName}/{csId}") {
+            val csId = it.arguments?.getString("csId")
+            if (csId != null) {
+                ReviewWriteScreen(navController, csId = csId)
+            }
         }
     }
 }

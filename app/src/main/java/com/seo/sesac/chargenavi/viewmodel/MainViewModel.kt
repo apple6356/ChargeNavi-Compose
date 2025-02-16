@@ -37,16 +37,14 @@ class MainViewModel(
         MutableStateFlow<RestResult<MutableList<ResultAddrInfo>>>(RestResult.DummyConstructor)
     val address get() = _address.asStateFlow()
 
-    /** 좌표 정보 */
-/*    private val _coords =
-        MutableStateFlow<RestResult<MutableList<CoodrsAddress>>>(RestResult.DummyConstructor)
-    val coords get() = _coords.asStateFlow()*/
-
     /** 주소로 충전소 검색 후 충전소 목록 가져오는 함수 */
-    fun getEvCsList(page: Int = 1, perPage: Int = 10, addr: String = "서울") {
+    fun getEvCsList(page: Int = 1, perPage: Int = 300, addr: String = "서울") {
         viewModelScope.launch {
-            val response = evCsRepository.getEvCsList(page, perPage, addr, apiKey)
-            _evCsList.value = RestResult.Success(response.data.toMutableList())
+            if(_evCsList.value is RestResult.DummyConstructor) {
+                val response = evCsRepository.getEvCsList(page, perPage, addr, apiKey)
+                _evCsList.value = RestResult.Success(response.data.toMutableList())
+                Log.e("MVM getEvCsList", "${evCsList.value}")
+            }
             Log.e("MVM evCsList", "${evCsList.value}")
         }
     }
@@ -58,20 +56,6 @@ class MainViewModel(
             _address.value = RestResult.Success(response.results.toMutableList())
         }
     }
-
-    /** 주소 -> 좌표 변환 */
-/*    fun convertAddressToCoords(address: String) {
-        viewModelScope.launch {
-            val response = geoCodeRepository.addressToCoords(address, naverClientId, naverClientSecret)
-            _coords.value = RestResult.Success(response.addresses.toMutableList())
-        }
-    }*/
-
-    /** 해당 좌표의 충전소 정보를 가져오는 함수 */
-/*    fun getEvCsInfo(latitude: String, longitude: String) =
-        (evCsList.value as RestResult.Success).data.find {
-            it.latitude == latitude && it.longitude == longitude
-        }*/
 
     /** 해당 좌표의 csId 찾기 */
     fun findCsIdByCoords(position: LatLng) =

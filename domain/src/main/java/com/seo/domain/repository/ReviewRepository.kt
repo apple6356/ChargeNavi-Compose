@@ -6,5 +6,6 @@ interface ReviewRepository<T> {
     suspend fun create(data: T): FireResult<T>
     fun delete()
     fun findByUserId()
-    fun findByCsId()
+    suspend fun findByCsIdOrderByCreateTime(csId: String): FireResult<MutableList<T>>
+    fun findByCsIdOrderByLike()
 }
