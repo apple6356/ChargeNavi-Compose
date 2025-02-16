@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -36,12 +35,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
-import com.seo.sesac.chargenavi.common.chargeTpMap
-import com.seo.sesac.chargenavi.common.cpStatMap
-import com.seo.sesac.chargenavi.common.cpTpMap
+import com.seo.sesac.chargenavi.common.ChangedStarRatingBar
+import com.seo.sesac.chargenavi.common.ReadOnlyStarRatingBar
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
+import com.seo.sesac.chargenavi.ui.screen.common.ChargeInfoItem
 import com.seo.sesac.chargenavi.ui.screen.common.CircularProgress
-import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
 import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
@@ -49,7 +47,6 @@ import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.EvCsInfo
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -75,9 +72,9 @@ fun DetailScreen(
         if (mainViewModel.evCsList.value is RestResult.Success) {
 
             Log.e("csId Detail", csId)
-            csInfo =
-                mainViewModel.findCSByCsId(csId).values.flatten() // flatten 을 사용해 여러 list 를 하나의 list 로 통합
-                    .sortedBy { it.cpId } // cpId(충전기 Id) 순으로 정렬
+            csInfo = mainViewModel.findCSByCsId(csId).values
+                .flatten() // flatten 을 사용해 여러 list 를 하나의 list 로 통합
+                .sortedBy { it.cpId } // cpId(충전기 Id) 순으로 정렬
         }
     }
 
@@ -178,6 +175,8 @@ fun DetailScreen(
                         )
                     }
 
+
+
                 }
 
                 // 주소
@@ -200,6 +199,7 @@ fun DetailScreen(
                     )
                 }
 
+                // 충전기 정보
                 csInfo.forEach { csInfo ->
                     ChargeInfoItem(csInfo)
                 }
@@ -223,7 +223,9 @@ fun DetailScreen(
 
 
                 Button(onClick = {
-                    navController.navigate(NavigationRoute.ReviewWrite.routeName)
+                    navController.navigate(
+                        "${NavigationRoute.ReviewWrite.routeName}/${csId}"
+                    )
                 }) {
                     Text(text = "리뷰 작성")
                 }

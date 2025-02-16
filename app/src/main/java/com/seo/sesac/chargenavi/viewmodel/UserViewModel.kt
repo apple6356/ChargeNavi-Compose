@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seo.sesac.chargenavi.common.NaverOAuth
-import com.seo.domain.entity.UserInfo
+import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.domain.usecase.UserUseCase
 import com.seo.sesac.firestore.repository.local.LocalUserRepository

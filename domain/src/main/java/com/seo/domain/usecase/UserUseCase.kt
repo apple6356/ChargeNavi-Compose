@@ -1,6 +1,6 @@
 package com.seo.sesac.domain.usecase
 
-import com.seo.domain.entity.UserInfo
+import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.domain.repository.UserRepository
 

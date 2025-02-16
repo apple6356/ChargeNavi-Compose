@@ -1,7 +1,7 @@
 package com.seo.sesac.firestore.repository.firestore
 
 import com.seo.sesac.data.common.FireResult
-import com.seo.domain.entity.Review
+import com.seo.sesac.data.entity.Review
 import com.seo.sesac.domain.repository.ReviewRepository
 import com.seo.sesac.firestore.datasource.firestore.ReviewDataSourceImpl
 
@@ -17,7 +17,11 @@ class ReviewRepositoryImpl(private val reviewDataSourceImpl: ReviewDataSourceImp
         TODO("Not yet implemented")
     }
 
-    override fun findByCsId() {
+    override suspend fun findByCsIdOrderByCreateTime(csId: String) =
+        reviewDataSourceImpl.findByCsIdOrderByCreateTime(csId)
+
+    override fun findByCsIdOrderByLike() {
         TODO("Not yet implemented")
     }
+
 }

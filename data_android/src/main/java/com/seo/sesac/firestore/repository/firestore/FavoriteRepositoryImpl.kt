@@ -1,7 +1,7 @@
 package com.seo.sesac.firestore.repository.firestore
 
 import com.seo.sesac.data.common.FireResult
-import com.seo.domain.entity.Favorite
+import com.seo.sesac.data.entity.Favorite
 import com.seo.sesac.domain.repository.FavoriteRepository
 import com.seo.sesac.firestore.datasource.firestore.FavoriteDataSourceImpl
 

@@ -1,4 +1,4 @@
-package com.seo.domain.entity
+package com.seo.sesac.data.entity
 
 import java.util.UUID
 

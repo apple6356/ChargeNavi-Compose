@@ -1,8 +1,7 @@
 package com.seo.sesac.firestore.datasource.firestore
 
 import com.seo.sesac.data.common.FireResult
-import com.seo.domain.entity.SearchHistory
-import com.seo.domain.datasource.FireStoreDataSource
+import com.seo.sesac.data.entity.SearchHistory
 import com.seo.sesac.firestore.common.FirestoreCollectionFilter
 import kotlinx.coroutines.tasks.await
 

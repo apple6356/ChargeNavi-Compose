@@ -1,4 +1,4 @@
-package com.seo.domain.entity
+package com.seo.sesac.data.entity
 
 data class SearchHistory(
     val id: Long,

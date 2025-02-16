@@ -1,4 +1,4 @@
-package com.seo.domain.entity
+package com.seo.sesac.data.entity
 
 data class Like(
     val id: Long,

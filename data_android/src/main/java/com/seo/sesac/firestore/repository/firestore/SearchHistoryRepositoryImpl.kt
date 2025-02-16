@@ -1,7 +1,7 @@
 package com.seo.sesac.firestore.repository.firestore
 
 import com.seo.sesac.data.common.FireResult
-import com.seo.domain.entity.SearchHistory
+import com.seo.sesac.data.entity.SearchHistory
 import com.seo.sesac.domain.repository.FireStoreRepository
 import com.seo.sesac.firestore.datasource.firestore.SearchHistoryDataSourceImpl
 

@@ -22,7 +22,7 @@ import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
-import com.seo.domain.entity.Favorite
+import com.seo.sesac.data.entity.Favorite
 import kotlinx.coroutines.flow.collectLatest
 
 /**

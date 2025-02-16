@@ -2,7 +2,7 @@ package com.seo.sesac.chargenavi.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.seo.sesac.data.common.FireResult
-import com.seo.domain.entity.SearchHistory
+import com.seo.sesac.data.entity.SearchHistory
 import com.seo.sesac.firestore.datasource.firestore.SearchHistoryDataSourceImpl
 import com.seo.sesac.firestore.repository.firestore.SearchHistoryRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow

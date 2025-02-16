@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.data.common.FireResult
-import com.seo.domain.entity.Favorite
+import com.seo.sesac.data.entity.Favorite
 import com.seo.sesac.firestore.datasource.firestore.FavoriteDataSourceImpl
 import com.seo.sesac.firestore.repository.firestore.FavoriteRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,9 +15,7 @@ import kotlinx.coroutines.launch
  * 즐겨찾기와 관련된 viewmodel
  * */
 class FavoriteViewModel(
-    private val favoriteRepository: FavoriteRepositoryImpl = FavoriteRepositoryImpl(
-        FavoriteDataSourceImpl()
-    )
+    private val favoriteRepository: FavoriteRepositoryImpl = FavoriteRepositoryImpl(FavoriteDataSourceImpl())
 ): ViewModel() {
 
     private val _favoriteList =

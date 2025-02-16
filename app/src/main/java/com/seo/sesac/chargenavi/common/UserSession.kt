@@ -1,6 +1,6 @@
 package com.seo.sesac.chargenavi.common
 
-import com.seo.domain.entity.UserInfo
+import com.seo.sesac.data.entity.UserInfo
 
 
 /**

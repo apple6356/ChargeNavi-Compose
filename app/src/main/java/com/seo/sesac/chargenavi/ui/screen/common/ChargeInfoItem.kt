@@ -1,21 +1,17 @@
-package com.seo.sesac.chargenavi.ui.screen.main
+package com.seo.sesac.chargenavi.ui.screen.common
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,10 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seo.sesac.chargenavi.R
-import com.seo.sesac.chargenavi.common.chargeTpMap
 import com.seo.sesac.chargenavi.common.cpStatMap
-import com.seo.sesac.chargenavi.common.cpTpMap
-import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
 import com.seo.sesac.data.entity.EvCsInfo
 
 /**
@@ -43,13 +36,12 @@ fun ChargeInfoItem(csInfo: EvCsInfo) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                vertical = 8.dp,
-                horizontal = 8.dp
+                vertical = 8.dp, horizontal = 8.dp
             )
             .border(
-                border = BorderStroke(
-                    width = 1.dp, color = Color.LightGray
-                ), shape = RoundedCornerShape(5.dp)
+                width = 1.dp,
+                color = Color.Black,
+                shape = RoundedCornerShape(5.dp)
             )
     ) {
         Column(
@@ -57,7 +49,9 @@ fun ChargeInfoItem(csInfo: EvCsInfo) {
                 .fillMaxHeight()
         ) { // 충전기 이름
             Text(
-                text = csInfo.cpNm, fontSize = 12.sp, fontWeight = FontWeight.SemiBold
+                text = csInfo.cpNm,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
             )
 
             // 충전기 상태에 따라 색 변경
@@ -73,15 +67,6 @@ fun ChargeInfoItem(csInfo: EvCsInfo) {
 
             // 해당 충전기에서 호환되는 충전 단자 이미지 리스트
             val csIconList = getChargeTypeIcon(csInfo.cpTp)
-
-
-            // 충전 속도, 충전기 이름에 충전 속도에 대한 의미가 있음
-/*            chargeTpMap[csInfo.chargeTp]?.let {
-                Text(
-                    text = it,
-                    fontSize = 12.sp
-                )
-            }*/
 
             Row(
                 modifier = Modifier
@@ -105,29 +90,24 @@ fun ChargeInfoItem(csInfo: EvCsInfo) {
                             .fillMaxHeight(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (icon in csIconList) {
-                            // 충전기 타입 이미지
+                        if (icon in csIconList) { // 충전기 타입 이미지
                             Icon(
                                 painter = painterResource(icon),
                                 contentDescription = "충전 단자 이미지",
                                 tint = statusColor
-                            )
-                            // 충전기 타입 문자
+                            ) // 충전기 타입 문자
                             Text(
                                 text = getChargeTypeString(icon),
                                 color = statusColor,
                                 fontSize = 12.sp
                             )
 
-                        }
-                        else {
-                            // 충전기 타입 이미지
+                        } else { // 충전기 타입 이미지
                             Icon(
                                 painter = painterResource(icon),
                                 contentDescription = "충전 단자 이미지",
                                 tint = Color.LightGray
-                            )
-                            // 충전기 타입 문자
+                            ) // 충전기 타입 문자
                             Text(
                                 text = getChargeTypeString(icon),
                                 color = Color.LightGray,
@@ -142,13 +122,14 @@ fun ChargeInfoItem(csInfo: EvCsInfo) {
         }
     }
 
+
 }
 
 fun getStatusColor(cpStat: String): Color =
     when(cpStat) {
         "1" -> Color.Green
         "2" -> Color.Red
-        "9" -> Color(0xFFFFA500)
+        "9" -> Color(0xFFFFA500) // 오렌지
         else -> Color.LightGray
     }
 
