@@ -1,33 +1,50 @@
 package com.seo.sesac.chargenavi.ui.screen.mypage
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
+import com.seo.sesac.chargenavi.viewmodel.UserViewModel
+import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
+import com.seo.sesac.data.common.FireResult
+import com.seo.sesac.data.entity.UserInfo
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * 프로필 수정 화면,
@@ -35,10 +52,23 @@ import com.seo.sesac.chargenavi.R
  * 프로필 사진 변경 시 이미지 선택 후 변경
  * */
 @Composable
-fun EditProfileScreen(navController: NavController) {
+fun EditProfileScreen(
+    navController: NavController,
+    userViewModel: UserViewModel = viewModel(factory = userViewModelFactory)
+) {
 
-    var nickname by remember {
-        mutableStateOf("")
+    // 유저 정보
+    var userInfo by remember {
+        mutableStateOf(UserInfo())
+    }
+
+    // 유저 정보 읽기
+    LaunchedEffect(key1 = userViewModel) {
+        userViewModel.userInfo.collectLatest { result ->
+            if (result is FireResult.Success) {
+                userInfo = result.data
+            }
+        }
     }
 
     Box(
@@ -62,28 +92,58 @@ fun EditProfileScreen(navController: NavController) {
                 )
             }
 
-            // 프로필 사진(임시)
-            Image(
-                painter = painterResource(R.drawable.ic_launcher_background),
-                contentDescription = null
-            )
-
-            // 프로필 사진 변경 버튼
-            Button(
-                onClick = {
-                    // 프로필 사진 변경
-                }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "프로필 사진 변경")
+
+                Text(
+                    text = "프로필 관리",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                // 프로필 사진
+                Image(
+                    painter = painterResource(R.drawable.image_user_default_profile_),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .padding(
+                            vertical = 20.dp
+                        )
+                )
+
+                // 프로필 사진 변경 버튼
+                TextButton(
+                    onClick = {
+                        // 프로필 사진 변경
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "프로필 사진 변경",
+                        tint = Color.Blue
+                    )
+                    Text(
+                        text = "프로필 사진 변경",
+                        color = Color.Blue
+                    )
+                }
             }
 
             // 닉네임 추후 TextField 로 변경
             TextField(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                value = nickname,
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = 20.dp
+                    ),
+                value = userInfo.nickname.toString(),
                 onValueChange = {
-                    nickname = it
+                    userInfo.nickname = it
                 },
                 label = {
                     Text(text = "닉네임 변경")
@@ -98,13 +158,26 @@ fun EditProfileScreen(navController: NavController) {
                 )
             )
 
-            // 변경 사항을 저장하는 버튼
-            Button(
-                onClick = {
-                    // 변경된 프로필 사진, 닉네임 저장
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
-                Text(text = "저장 하기")
+                // 변경 사항을 저장하는 버튼
+                TextButton(onClick = {
+                        // 변경된 프로필 사진, 닉네임 저장
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = "프로필 저장",
+                        tint = Color.Blue
+                    )
+                    Text(
+                        text = "프로필 저장",
+                        color = Color.Blue
+                    )
+                }
             }
         }
     }

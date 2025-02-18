@@ -11,7 +11,7 @@ class FirestoreCollectionFilter {
         private val userCollection = Firebase.firestore.collection("users")
         fun getUserFirestoreCollection() = userCollection
 
-        private val favoriteCollection = Firebase.firestore.collection("users")
+        private val favoriteCollection = Firebase.firestore.collection("favorites")
         fun getFavoriteFirestoreCollection() = favoriteCollection
 
         private val searchHistoryCollection = Firebase.firestore.collection("search_history")

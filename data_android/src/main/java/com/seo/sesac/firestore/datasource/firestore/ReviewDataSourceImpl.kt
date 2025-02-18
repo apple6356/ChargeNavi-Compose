@@ -23,11 +23,22 @@ class ReviewDataSourceImpl: ReviewDataSource<Review> {
         TODO("Not yet implemented")
     }
 
-    override fun findByUserId() {
-        TODO("Not yet implemented")
+    override suspend fun findByUserId(userId: String) = runCatching {
+        val resultTask = FirestoreCollectionFilter.getReviewCollection()
+            .whereEqualTo("userId", userId)
+            .get().await()
+
+        if (!resultTask.isEmpty) {
+            val reviewList = resultTask.toObjects(Review::class.java) as MutableList<Review>
+            FireResult.Success(reviewList)
+        } else {
+            FireResult.Failure(Exception("검색 결과가 없습니다."))
+        }
+    }.getOrElse {
+        FireResult.Failure(Exception("데이터 베이스 문제 발생: ${it.message}"))
     }
 
-    override suspend fun findByCsIdOrderByCreateTime(csId: String) = try {
+    override suspend fun findByCsIdOrderByCreateTime(csId: String) = runCatching {
         val resultTask = FirestoreCollectionFilter.getReviewCollection()
             .whereEqualTo("csId", csId)
             .get().await()
@@ -38,8 +49,8 @@ class ReviewDataSourceImpl: ReviewDataSource<Review> {
         } else {
             FireResult.Failure(Exception("검색 결과가 없습니다."))
         }
-    } catch(e: Exception) {
-        FireResult.Failure(Exception("데이터 베이스 문제 발생: ${e.message}"))
+    }.getOrElse {
+        FireResult.Failure(Exception("데이터 베이스 문제 발생: ${it.message}"))
     }
 
     override fun findByCsIdOrderByLike() {

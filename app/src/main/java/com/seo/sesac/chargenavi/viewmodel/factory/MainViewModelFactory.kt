@@ -10,19 +10,6 @@ import com.seo.sesac.data.datasource.http.GeoCodeDataSource
 import com.seo.sesac.data.repository.http.EvCsRepository
 import com.seo.sesac.data.repository.http.GeoCodeRepository
 
-/*class MainViewModelFactory(
-    private val evCsRepository: EvCsRepository,
-    private val geoCodeRepository: GeoCodeRepository
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(evCsRepository, geoCodeRepository) as T
-        }
-        throw IllegalArgumentException("해당 뷰모델을 찾을수 없습니다")
-    }
-}*/
-
 /**
  * MainViewModelFactory 작성
  * 수정(25-02-12): ViewModel의 반복적인 초기화 현상을 막기위해 ViewModel과 Repository를 by lazy로 처음 한번만 초기화하도록 변경

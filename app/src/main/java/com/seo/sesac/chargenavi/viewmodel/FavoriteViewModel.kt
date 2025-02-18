@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.data.common.FireResult
+import com.seo.sesac.data.entity.EvCsInfo
 import com.seo.sesac.data.entity.Favorite
 import com.seo.sesac.firestore.datasource.firestore.FavoriteDataSourceImpl
 import com.seo.sesac.firestore.repository.firestore.FavoriteRepositoryImpl
@@ -22,22 +23,24 @@ class FavoriteViewModel(
         MutableStateFlow<FireResult<MutableList<Favorite>>>(FireResult.DummyConstructor)
     val favoriteList get() = _favoriteList
 
-    private val _favorite =
-        MutableStateFlow<FireResult<Favorite>>(FireResult.DummyConstructor)
-    val favorite get() = _favorite
 
     /**
      * 즐겨찾기 등록
      * */
-     fun addFavorite(userId: String, csId: String) {
+     fun addFavorite(userId: String, csInfo: EvCsInfo) {
         viewModelScope.launch {
-            val favorite = Favorite(csId = csId, userId = userId)
+            val favorite = Favorite(
+                userId = userId,
+                csId = csInfo.csId.toString(),
+                address = csInfo.address,
+                csNm = csInfo.csNm
+            )
+
             Log.e("fvm addFavorite", "favorite: $favorite")
 
             val result = favoriteRepository.create(favorite)
             if (result is FireResult.Success) {
-                _favorite.value = result
-                Log.e("fvm addFavorite", "_favorite: $_favorite , result: ${result}")
+                Log.e("fvm addFavorite", "result: ${result}")
             } else {
                 Log.e("fvm addFavorite error", "${(result as FireResult.Failure).exception}")
             }
@@ -51,16 +54,6 @@ class FavoriteViewModel(
         viewModelScope.launch {
             val result = favoriteRepository.delete(userId, csId)
             Log.e("fvm deleteFavorite", "${result}")
-            // _favorite 초기화
-            _favorite.value = FireResult.DummyConstructor
-        }
-    }
-
-    fun getFavorite(userId: String, csId: String) {
-        viewModelScope.launch {
-            val result = favoriteRepository.findByUserIdAndCsId(userId, csId)
-            _favorite.value = result
-            Log.e("fvm getFavorite", "_favorite: $_favorite , result: ${result}")
         }
     }
 

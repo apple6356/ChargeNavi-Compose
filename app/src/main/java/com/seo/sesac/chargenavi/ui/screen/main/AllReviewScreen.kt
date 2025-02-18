@@ -1,23 +1,28 @@
 package com.seo.sesac.chargenavi.ui.screen.main
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -29,10 +34,9 @@ import androidx.navigation.NavController
 import com.seo.sesac.data.entity.Review
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
-import com.seo.sesac.chargenavi.ui.screen.main.List.ReviewListScreen
-import com.seo.sesac.chargenavi.viewmodel.MainViewModel
+import com.seo.sesac.chargenavi.ui.screen.common.CircularProgress
+import com.seo.sesac.chargenavi.ui.screen.main.list.ReviewListScreen
 import com.seo.sesac.chargenavi.viewmodel.ReviewViewModel
-import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 import com.seo.sesac.data.common.FireResult
 import kotlinx.coroutines.flow.collectLatest
 
@@ -42,9 +46,9 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun AllReviewScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory),
     reviewViewModel: ReviewViewModel = viewModel(),
-    csId: String
+    csId: String,
+    userId: String
 ) {
 
     // 리뷰 정보
@@ -61,13 +65,12 @@ fun AllReviewScreen(
     LaunchedEffect(key1 = reviewViewModel.reviewList) {
         reviewViewModel.reviewList.collectLatest {
             if (it is FireResult.Success) {
-                reviewList = it.data.sortedBy {
+                reviewList = it.data.sortedByDescending {
                     it.createTime
                 }
             }
         }
     }
-
 
     Box(
         modifier = Modifier
@@ -78,7 +81,8 @@ fun AllReviewScreen(
             )
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
             // 뒤로가기 버튼
             IconButton(
@@ -92,27 +96,51 @@ fun AllReviewScreen(
                 )
             }
 
-            Text(
-                text = "리뷰",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "리뷰",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                TextButton(
+                    onClick = {
+                        navController.navigate("${NavigationRoute.ReviewWrite.routeName}/${csId}")
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "리뷰 작성 이동",
+                        tint = Color.Blue
+                    )
+
+                    Text(
+                        text = "리뷰 작성",
+                        fontSize = 15.sp,
+                        color = Color.Blue
+                    )
+                }
+            }
 
             HorizontalDivider(
                 color = Color.LightGray
             )
 
             // 리뷰 목록
-            ReviewListScreen(reviewList)
+            ReviewListScreen(reviewList, userId)
 
             // 리뷰 작성 이동 버튼
-            Button(
-                onClick = {
-                    navController.navigate(NavigationRoute.ReviewWrite.routeName)
-                }
-            ) {
-                Text(text = "리뷰 작성 화면 이동")
+            Button(onClick = {
+                navController.navigate(NavigationRoute.ReviewWrite.routeName)
+            }) {
+                Text(text = "리뷰 작성")
             }
         }
     }
+
 }

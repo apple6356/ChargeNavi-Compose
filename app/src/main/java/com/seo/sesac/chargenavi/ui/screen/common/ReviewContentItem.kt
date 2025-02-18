@@ -28,13 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seo.sesac.data.entity.Review
 import com.seo.sesac.chargenavi.common.ReadOnlyStarRatingBar
+import com.seo.sesac.chargenavi.common.showToast
 
 /**
  * 리뷰 내용 보
  * */
 @Composable
 fun ReviewContentItem(
-    reviewInfo: Review
+    reviewInfo: Review,
+    userId: String
 ) {
 
     // 좋아요 상태
@@ -59,7 +61,8 @@ fun ReviewContentItem(
                     ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
-            ) { // 작성자
+            ) {
+                // 작성자
                 Text(
                     text = reviewInfo.nickName,
                     fontSize = 15.sp,
@@ -91,7 +94,11 @@ fun ReviewContentItem(
                     // 좋아요 버튼
                     IconButton(
                         onClick = {
-                        likeState = !likeState
+                            if (reviewInfo.userId.equals(userId)) {
+                                showToast("자신의 리뷰는 추천할 수 없습니다.")
+                            } else {
+                                likeState = !likeState
+                            }
                         }
                     ) {
                         Icon(
@@ -116,6 +123,8 @@ fun ReviewContentItem(
             }
 
             HorizontalDivider(
+                modifier = Modifier
+                    .dividerModifier(),
                 color = Color.LightGray
             )
         }

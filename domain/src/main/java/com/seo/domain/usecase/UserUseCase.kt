@@ -24,6 +24,4 @@ class UserUseCase(private val userRepository: UserRepository<UserInfo>) {
             return FireResult.Failure(Exception("오류 발생"))
         }
     }
-
-//    suspend fun findById(userId: String)
 }
