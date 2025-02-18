@@ -8,7 +8,7 @@ import com.seo.sesac.chargenavi.common.NaverOAuth
 import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.domain.usecase.UserUseCase
-import com.seo.sesac.firestore.repository.local.LocalUserRepository
+import com.seo.sesac.firestore.repository.firestore.UserRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
  * */
 class UserViewModel(
     private val userUseCase: UserUseCase,
-    private val localUserRepository: LocalUserRepository
+    private val userRepository: UserRepositoryImpl
 ): ViewModel() {
 
     /** 유저 정보 */
@@ -47,13 +47,6 @@ class UserViewModel(
                         // firestore 저장
                         _userInfo.value = userUseCase.loginNaverUserClass(loginUserInfo)
 
-                        // datastore 저장
-                        loginUserInfo.run {
-                            if (id != null && nickname != null) {
-                                localUserRepository.saveUserInfo(id!!, nickname!!)
-                            }
-                        }
-
                     }
                 } else {
                     Log.e("naver login", "네이버 로그인 실패: ${result.exceptionOrNull()}")
@@ -63,9 +56,16 @@ class UserViewModel(
     }
 
     /**
-     * DataStore 에 저장된 유저 정보를 가져옴
+     * 유저 정보 StateFlow 에 저장
      * */
-    fun getLocalUserInfo() =
-        localUserRepository.getUserInfoFromDatastore()
+    fun findById(userId: String) {
+        viewModelScope.launch {
+            _userInfo.value = userRepository.findById(userId)
+        }
+    }
+
+    fun logoutUser() {
+        _userInfo.value = FireResult.DummyConstructor
+    }
 
 }

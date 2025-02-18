@@ -1,4 +1,4 @@
-package com.seo.sesac.chargenavi.ui.screen.main.List
+package com.seo.sesac.chargenavi.ui.screen.main.list
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,7 +15,7 @@ import com.seo.sesac.chargenavi.ui.screen.common.ReviewContentItem
  * FireStore 에서 Review 데이터 받아와 구현
  * */
 @Composable
-fun ReviewListScreen(reviewList: List<Review>) {
+fun ReviewListScreen(reviewList: List<Review>, userId: String) {
 
     LazyColumn(
         modifier = Modifier
@@ -27,7 +27,7 @@ fun ReviewListScreen(reviewList: List<Review>) {
             )
     ) {
         items(reviewList) {review ->
-            ReviewContentItem(review)
+            ReviewContentItem(review, userId)
         }
     }
 }

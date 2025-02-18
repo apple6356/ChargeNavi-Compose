@@ -6,7 +6,7 @@ import com.seo.sesac.data.common.FireResult
 interface ReviewDataSource<T> {
     suspend fun create(data: Review): FireResult<T>
     fun delete()
-    fun findByUserId()
+    suspend fun findByUserId(userId: String): FireResult<MutableList<T>>
     suspend fun findByCsIdOrderByCreateTime(csId: String): FireResult<MutableList<T>>
     fun findByCsIdOrderByLike()
 }

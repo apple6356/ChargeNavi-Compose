@@ -2,7 +2,7 @@ package com.seo.sesac.data.entity
 
 data class UserInfo(
     val id: String? = "-1",
-    val nickname: String? = "nickname",
+    var nickname: String? = "nickname",
     val profileImage: String? = ""
 ) {
     fun toMap(): Map<String, String?> {

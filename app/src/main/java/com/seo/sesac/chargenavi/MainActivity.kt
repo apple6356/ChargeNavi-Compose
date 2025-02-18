@@ -26,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.compose.ChargeNaviTheme
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.gun0912.tedpermission.PermissionListener
@@ -38,7 +39,6 @@ import com.seo.sesac.chargenavi.ui.navigation.mainNavGraph
 import com.seo.sesac.chargenavi.ui.navigation.myPageNavGraph
 import com.seo.sesac.chargenavi.ui.screen.main.MainScreen
 import com.seo.sesac.chargenavi.ui.screen.main.NaverMapScreen
-import com.seo.sesac.chargenavi.ui.theme.ChargeNaviTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

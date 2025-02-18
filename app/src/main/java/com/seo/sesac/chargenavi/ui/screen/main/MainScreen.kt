@@ -1,6 +1,7 @@
 package com.seo.sesac.chargenavi.ui.screen.main
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -32,36 +33,43 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.compose.ExperimentalNaverMapApi
-import com.naver.maps.map.compose.MapUiSettings
-import com.naver.maps.map.compose.Marker
-import com.naver.maps.map.compose.MarkerState
-import com.naver.maps.map.compose.NaverMap
-import com.naver.maps.map.compose.rememberCameraPositionState
-import com.naver.maps.map.compose.rememberFusedLocationSource
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.LocationUtils
+import com.seo.sesac.chargenavi.common.NaverOAuth
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
+import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
+import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.EvCsInfo
+import com.seo.sesac.data.entity.UserInfo
 import kotlinx.coroutines.flow.collectLatest
 
 /**
  * 시작 화면, 메인 화면
  * */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory)
+    userViewModel: UserViewModel = viewModel(factory = userViewModelFactory)
 ) {
 
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        if (NaverOAuth.isLoggedIn()) {
+            Log.e("NaverOAuth", "로그인 된 상태")
+            NaverOAuth.getProfile { result ->
+                // 네이버 로그인 되어있으면
+                userViewModel.findById(result.profile?.id.toString())
+            }
+        } else {
+            Log.e("NaverOAuth", "로그인 되지 않은 상태")
+            NaverOAuth.logout()
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()

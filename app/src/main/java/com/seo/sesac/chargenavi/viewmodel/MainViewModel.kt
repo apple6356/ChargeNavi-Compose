@@ -1,14 +1,12 @@
 package com.seo.sesac.chargenavi.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.internal.illegalDecoyCallException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.seo.sesac.chargenavi.common.apiKey
 import com.seo.sesac.chargenavi.common.naverClientId
 import com.seo.sesac.chargenavi.common.naverClientSecret
-import com.seo.sesac.data.entity.CoodrsAddress
 import com.seo.sesac.data.entity.EvCsInfo
 import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.ResultAddrInfo
@@ -38,7 +36,7 @@ class MainViewModel(
     val address get() = _address.asStateFlow()
 
     /** 주소로 충전소 검색 후 충전소 목록 가져오는 함수 */
-    fun getEvCsList(page: Int = 1, perPage: Int = 300, addr: String = "서울") {
+    fun getEvCsList(page: Int = 1, perPage: Int = 10, addr: String = "서울") {
         viewModelScope.launch {
             if(_evCsList.value is RestResult.DummyConstructor) {
                 val response = evCsRepository.getEvCsList(page, perPage, addr, apiKey)
@@ -58,7 +56,7 @@ class MainViewModel(
     }
 
     /** 해당 좌표의 csId 찾기 */
-    fun findCsIdByCoords(position: LatLng) =
+    fun findByCoords(position: LatLng) =
         evCsList.value.let { result ->
             if (result is RestResult.Success) {
                 result.data.find { it.latitude.toDouble() == position.latitude && it.longitude.toDouble() == position.longitude }?.csId
@@ -68,7 +66,7 @@ class MainViewModel(
         }
 
     /** csId 가 같은 충전소 정보를 Map 으로 그룹화 */
-    fun findCSByCsId(csId: String): Map<Int, List<EvCsInfo>> =
+    fun findByCsId(csId: String): Map<Int, List<EvCsInfo>> =
         evCsList.value.let { result ->
             Log.e("MVM findCSByCsId", "$result")
             if (result is RestResult.Success) {
@@ -81,7 +79,6 @@ class MainViewModel(
                 emptyMap()
             }
         }
-
 
 }
 

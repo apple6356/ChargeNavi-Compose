@@ -13,9 +13,8 @@ class ReviewRepositoryImpl(private val reviewDataSourceImpl: ReviewDataSourceImp
         TODO("Not yet implemented")
     }
 
-    override fun findByUserId() {
-        TODO("Not yet implemented")
-    }
+    override suspend fun findByUserId(userId: String) =
+        reviewDataSourceImpl.findByUserId(userId)
 
     override suspend fun findByCsIdOrderByCreateTime(csId: String) =
         reviewDataSourceImpl.findByCsIdOrderByCreateTime(csId)

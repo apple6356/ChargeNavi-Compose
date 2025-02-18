@@ -23,6 +23,7 @@ import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.data.entity.Favorite
+import com.seo.sesac.data.entity.UserInfo
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -38,26 +39,28 @@ fun FavoriteScreen(
 ) {
 
     // 유저 정보
-    var localUserInfo by remember {
-        mutableStateOf(Pair("", ""))
+    var userInfo by remember {
+        mutableStateOf(UserInfo())
     }
 
     // 유저 정보 읽기
     LaunchedEffect(key1 = userViewModel) {
-        userViewModel.getLocalUserInfo().collectLatest { (userId, nickname) ->
-            localUserInfo = Pair(userId, nickname)
+        userViewModel.userInfo.collectLatest { result ->
+            if (result is FireResult.Success) {
+                userInfo = result.data
+            }
         }
     }
 
+    // 즐겨찾기 목록
     var favoriteList by remember {
         mutableStateOf(emptyList<Favorite>())
     }
 
     // 즐겨찾기 목록 불러오기
-    LaunchedEffect(key1 = localUserInfo) {
-        val (userId, _) = localUserInfo
-        if (userId.isNotEmpty()) {
-            favoriteViewModel.getFavoriteList(localUserInfo.first)
+    LaunchedEffect(key1 = userInfo) {
+        if (!userInfo.id.equals("-1")) {
+            userInfo.id?.let { favoriteViewModel.getFavoriteList(it) }
         }
 
         favoriteViewModel.favoriteList.collectLatest { result ->
@@ -83,7 +86,11 @@ fun FavoriteScreen(
 
             Text(
                 text = "즐겨찾기",
-                fontSize = 30.sp
+                fontSize = 30.sp,
+                modifier = Modifier
+                    .padding(
+                        bottom = 30.dp
+                    )
             )
 
             if (favoriteList.isNotEmpty()) {

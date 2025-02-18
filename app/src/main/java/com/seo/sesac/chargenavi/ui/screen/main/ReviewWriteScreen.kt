@@ -1,22 +1,25 @@
 package com.seo.sesac.chargenavi.ui.screen.main
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -25,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -37,12 +41,14 @@ import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.ChangedStarRatingBar
 import com.seo.sesac.chargenavi.common.showToast
-import com.seo.sesac.chargenavi.ui.screen.common.CircularProgress
+import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.chargenavi.viewmodel.ReviewViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
+import com.seo.sesac.data.common.FireResult
+import com.seo.sesac.data.entity.UserInfo
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -68,14 +74,16 @@ fun ReviewWriteScreen(
     }
 
     // 유저 정보
-    var localUserInfo by remember {
-        mutableStateOf(Pair("", ""))
+    var userInfo by remember {
+        mutableStateOf(UserInfo())
     }
 
     // 유저 정보 읽기
     LaunchedEffect(key1 = userViewModel) {
-        userViewModel.getLocalUserInfo().collectLatest { (userId, nickname) ->
-            localUserInfo = Pair(userId, nickname)
+        userViewModel.userInfo.collectLatest { result ->
+            if (result is FireResult.Success) {
+                userInfo = result.data
+            }
         }
     }
 
@@ -86,6 +94,9 @@ fun ReviewWriteScreen(
         }
     }
 
+    // 입력 영역 스크롤 상태
+    val writeScrollState = rememberScrollState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -94,7 +105,10 @@ fun ReviewWriteScreen(
                 end = 10.dp
             )
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             // 뒤로가기
             IconButton(
                 onClick = {
@@ -107,24 +121,47 @@ fun ReviewWriteScreen(
                 )
             }
 
-            Text(
-                text = "리뷰 작성",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            // 별점
-            ChangedStarRatingBar(5, rating) {
-                rating = it
+                Text(
+                    text = "리뷰 작성",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
             }
 
-            // 사진 업로드
-//            Text(text = "사진 업로드")
+            // 별점
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = 40.dp
+                    ),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ChangedStarRatingBar(5, rating) {
+                    rating = it
+                }
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.dividerModifier(),
+                color = Color.LightGray
+            )
 
             // 리뷰 작성 칸
             TextField(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .verticalScroll(writeScrollState)
+                    .padding(
+                        vertical = 10.dp
+                    ),
                 value = reviewContent,
                 onValueChange = {
                     reviewContent = it
@@ -132,7 +169,7 @@ fun ReviewWriteScreen(
                 textStyle = TextStyle(fontSize = 15.sp),
                 placeholder = {
                     Text(
-                        text = "리뷰 내용을 작성해주세요.",
+                        text = "별점과 함께 리뷰 내용을 입력해주세요.",
                         color = Color.LightGray
                     )
                 },
@@ -150,21 +187,29 @@ fun ReviewWriteScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
-            ) { // 작성 완료 버튼
-                Button(
+            ) {
+                // 작성 완료 버튼
+                TextButton(
                     onClick = {
-                        // reviewContent 를 비롯한 리뷰 작성 정보를 저장하고 DetailScreen 으로 화면 전환
-                        // reviewContent, 작성자, 작성 시간, 사진 등
+                        // 작성된 리뷰 정보를 저장하고 DetailScreen 으로 화면 전환
 
                         if (rating <= 0) {
                             showToast("별점을 입력해주세요.")
                         } else {
-                            reviewViewModel.writeReview(reviewContent, rating, localUserInfo, csId)
+                            reviewViewModel.writeReview(reviewContent, rating, userInfo, csId)
                         }
                     }
                 ) {
+                    Icon(
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = "리뷰 저장",
+                        tint = Color.Blue
+                    )
+
                     Text(
-                        text = "작성"
+                        text = "저장",
+                        fontSize = 15.sp,
+                        color = Color.Blue
                     )
                 }
             }

@@ -12,13 +12,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,18 +37,22 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
-import com.seo.sesac.chargenavi.common.ChangedStarRatingBar
-import com.seo.sesac.chargenavi.common.ReadOnlyStarRatingBar
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.ui.screen.common.ChargeInfoItem
 import com.seo.sesac.chargenavi.ui.screen.common.CircularProgress
+import com.seo.sesac.chargenavi.ui.screen.common.ReviewContentItem
+import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
 import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
+import com.seo.sesac.chargenavi.viewmodel.ReviewViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
+import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.EvCsInfo
+import com.seo.sesac.data.entity.Review
+import com.seo.sesac.data.entity.UserInfo
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -59,6 +65,7 @@ fun DetailScreen(
     mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory),
     favoriteViewModel: FavoriteViewModel = viewModel(),
     userViewModel: UserViewModel = viewModel(factory = userViewModelFactory),
+    reviewViewModel: ReviewViewModel = viewModel(),
     csId: String
 ) {
 
@@ -72,21 +79,23 @@ fun DetailScreen(
         if (mainViewModel.evCsList.value is RestResult.Success) {
 
             Log.e("csId Detail", csId)
-            csInfo = mainViewModel.findCSByCsId(csId).values
+            csInfo = mainViewModel.findByCsId(csId).values
                 .flatten() // flatten 을 사용해 여러 list 를 하나의 list 로 통합
                 .sortedBy { it.cpId } // cpId(충전기 Id) 순으로 정렬
         }
     }
 
     // 유저 정보
-    var localUserInfo by remember {
-        mutableStateOf(Pair("", ""))
+    var userInfo by remember {
+        mutableStateOf(UserInfo())
     }
 
     // 유저 정보 읽기
     LaunchedEffect(key1 = userViewModel) {
-        userViewModel.getLocalUserInfo().collectLatest { (userId, nickname) ->
-            localUserInfo = Pair(userId, nickname)
+        userViewModel.userInfo.collectLatest { result ->
+            if (result is FireResult.Success) {
+                userInfo = result.data
+            }
         }
     }
 
@@ -96,20 +105,38 @@ fun DetailScreen(
     }
 
     // 즐겨찾기 상태 갱신
-    LaunchedEffect(key1 = localUserInfo) {
-        Log.e("DetailScreen", "localUserInfo: $localUserInfo , favoriteState $favoriteState")
-        val (userId, _) = localUserInfo
-        if (userId.isNotEmpty()) {
-            favoriteState = favoriteViewModel.isFavorite(localUserInfo.first, csId)
-            Log.e("DetailScreen", "즐겨찾기 상태: $favoriteState")
+    LaunchedEffect(key1 = userInfo) {
+
+        if (!userInfo.id.equals("-1") && userInfo.id != null) {
+            favoriteState = favoriteViewModel.isFavorite(userInfo.id!!, csId)
+        }
+    }
+
+    // 현재 충전소의 리뷰 정보 불러오기
+    LaunchedEffect(Unit) {
+        reviewViewModel.findByCsIdOrderByCreateTime(csId)
+    }
+
+    // 리뷰 목록
+    var reviewList by remember {
+        mutableStateOf<List<Review>>(emptyList())
+    }
+
+    // 리뷰 목록 가져오기
+    LaunchedEffect(key1 = reviewViewModel.reviewList) {
+        reviewViewModel.reviewList.collectLatest {
+            if (it is FireResult.Success) {
+                reviewList = it.data.sortedByDescending { // 최신순 정렬
+                    it.createTime
+                }
+            }
         }
     }
 
     // 스크롤 상태
     val scrollState = rememberScrollState()
 
-    //
-    if (csInfo.isEmpty()) {
+    if (csInfo.isEmpty() && reviewList.isEmpty()) {
         CircularProgress()
     } else {
 
@@ -157,11 +184,11 @@ fun DetailScreen(
                         onClick = {
                             favoriteState = !favoriteState
                             // 로그인 된 상태에서만 반응
-                            if (localUserInfo.first.isNotEmpty()) {
+                            if (userInfo.id != null && !userInfo.id.equals("-1")) {
                                 if (favoriteState) {
-                                    favoriteViewModel.addFavorite(localUserInfo.first, csId)
+                                    favoriteViewModel.addFavorite(userInfo.id!!, csInfo.first())
                                 } else {
-                                    favoriteViewModel.deleteFavorite(localUserInfo.first, csId)
+                                    favoriteViewModel.deleteFavorite(userInfo.id!!, csId)
                                 }
                             }
                         }
@@ -174,9 +201,6 @@ fun DetailScreen(
                             tint = Color.Red
                         )
                     }
-
-
-
                 }
 
                 // 주소
@@ -204,31 +228,52 @@ fun DetailScreen(
                     ChargeInfoItem(csInfo)
                 }
 
-                // 최근 리뷰 혹은 좋아요 가장 많은 리뷰 보이기
-                // firebase 에 연결하고 review 데이터 가져오면 구현
-                // 충전소 리뷰 일부 (전체 화면일 때만 보인다)
-                Text(text = "리뷰")
-                Text(text = "최신 리뷰1")
-                Text(text = "리뷰 더보기 버튼")
-                Text(text = "리뷰 작성 버튼")
+                HorizontalDivider(
+                    modifier = Modifier.dividerModifier(),
+                    color = Color.LightGray
+                )
 
-                // navigation test button
-                Button(onClick = {
-                    navController.navigate(
-                        "${NavigationRoute.ReviewList.routeName}/${csId}"
-                    )
-                }) {
-                    Text(text = "리뷰 더보기")
+                // 리뷰
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            bottom = 20.dp
+                        ),
+                    text = "리뷰",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                // 최신 리뷰 3개 보이기
+                reviewList.take(3).forEach {
+                    ReviewContentItem(it, userInfo.id.toString())
                 }
 
+                // 충전소의 모든 리뷰 보기
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextButton(
+                        onClick = {
+                            navController.navigate("${NavigationRoute.ReviewList.routeName}/${csId}/${userInfo.id}")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "전체 리뷰 버튼",
+                            tint = Color.Blue
+                        )
 
-                Button(onClick = {
-                    navController.navigate(
-                        "${NavigationRoute.ReviewWrite.routeName}/${csId}"
-                    )
-                }) {
-                    Text(text = "리뷰 작성")
+                        Text(
+                            text = "리뷰 더보기",
+                            fontSize = 15.sp,
+                            color = Color.Blue
+                        )}
                 }
+
             }
 
         }

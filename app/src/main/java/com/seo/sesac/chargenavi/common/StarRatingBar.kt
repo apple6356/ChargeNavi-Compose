@@ -16,6 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+
+private val starSize = 20.dp
+private val writeStarSize = 50.dp
+private val starSpacing = 4.dp
+
 /**
  * 별점을 매길 수 있는 바
  * */
@@ -25,8 +30,6 @@ fun ChangedStarRatingBar(
     rating: Int,
     onRatingChanged: (Int) -> Unit
 ) {
-    val starSize = 24.dp // 별 크기
-    val starSpacing = 4.dp // 별 간격
 
     Row(
         modifier = Modifier.selectableGroup(),
@@ -46,7 +49,7 @@ fun ChangedStarRatingBar(
                         selected = isSelected,
                         onClick = { onRatingChanged(i) }
                     )
-                    .size(starSize)
+                    .size(writeStarSize)
             )
 
             if (i < maxStars) {
@@ -64,8 +67,6 @@ fun ReadOnlyStarRatingBar(
     maxStars: Int = 5,
     rating: Int
 ) {
-    val starSize = 24.dp
-    val starSpacing = 4.dp
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         for (i in 1..maxStars) {

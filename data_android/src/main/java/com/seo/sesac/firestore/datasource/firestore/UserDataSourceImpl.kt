@@ -1,5 +1,6 @@
 package com.seo.sesac.firestore.datasource.firestore
 
+import com.seo.domain.datasource.UserDataSource
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.firestore.common.FirestoreCollectionFilter
 import com.seo.sesac.data.entity.UserInfo
@@ -8,7 +9,7 @@ import kotlinx.coroutines.tasks.await
 /**
  * firestore user datasource
  * */
-class UserDataSourceImpl: com.seo.domain.datasource.UserDataSource<UserInfo> {
+class UserDataSourceImpl: UserDataSource<UserInfo> {
 
     // runCatching 사용하여 가독성 좋게 예외처리
 
@@ -27,25 +28,6 @@ class UserDataSourceImpl: com.seo.domain.datasource.UserDataSource<UserInfo> {
         }
 
     }
-    /* suspend fun createa(data: UserInfo)= kotlin.runCatching {
-
-        val user = data.id?.let { findById(it) }
-        println("user: ${user}")
-        println("data: ${data}")
-
-         val reuslt = if (user?.id.equals("-1")) {
-            // 신규 유저 등록
-            val newUser = FirestoreCollectionFilter.getUserFirestoreCollection().add(data.toMap()).await().get().result.data as UserInfo
-            println("new user: $newUser")
-            newUser
-        } else {
-            println("old user: ${user}")
-            // 기존 유저 로그인
-            user!!
-        }
-    }.getOrElse {
-
-     }*/
 
     /** user 정보 삭제 */
     override suspend fun delete(id: Long): FireResult<Boolean> {
@@ -54,18 +36,7 @@ class UserDataSourceImpl: com.seo.domain.datasource.UserDataSource<UserInfo> {
 
     /** user 정보 갱신 */
     override suspend fun update(data: UserInfo): FireResult<Boolean> {
-/*        val resultTask = collection.whereEqualTo("id", data.id)
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful && task.result.size() > 0) {
-                    task.result.forEach {
-                        collection.document(it.id)
-                            .update(data.toMap())
-                    }
-                }
-            }.await()
 
-        resultTask.isEmpty*/
         return FireResult.Success(true)
     }
 

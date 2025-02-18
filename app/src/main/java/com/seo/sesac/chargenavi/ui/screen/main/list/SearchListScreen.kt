@@ -1,4 +1,4 @@
-package com.seo.sesac.chargenavi.ui.screen.main.List
+package com.seo.sesac.chargenavi.ui.screen.main.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -41,10 +41,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             SearchScreen(navController)
         }
         /* 리뷰 목록 화면 */
-        composable(route = "${NavigationRoute.ReviewList.routeName}/{csId}") {
+        composable(route = "${NavigationRoute.ReviewList.routeName}/{csId}/{userId}") {
             val csId = it.arguments?.getString("csId")
-            if (csId != null) {
-                AllReviewScreen(navController, csId = csId)
+            val userId = it.arguments?.getString("userId")
+            if (csId != null && userId != null) {
+                AllReviewScreen(navController, csId = csId, userId = userId)
             }
         }
         /* 리뷰 작성 화면 */

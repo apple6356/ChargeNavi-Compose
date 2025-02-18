@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.data.entity.Review
+import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.firestore.datasource.firestore.ReviewDataSourceImpl
 import com.seo.sesac.firestore.repository.firestore.ReviewRepositoryImpl
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,9 +35,20 @@ class ReviewViewModel(
     /**
      * 리뷰 저장
      * */
-    fun writeReview(reviewContent: String, rating: Int, userInfo: Pair<String, String>, csId: String) {
+    fun writeReview(reviewContent: String, rating: Int, userInfo: UserInfo, csId: String) {
         viewModelScope.launch {
-            val reviewInfo = Review(csId = csId, userId = userInfo.first, nickName = userInfo.second, content = reviewContent, rating = rating)
+            var reviewInfo = Review()
+
+            if (userInfo.id != null && userInfo.nickname != null) {
+                reviewInfo = Review(
+                    csId = csId,
+                    userId = userInfo.id.toString(),
+                    nickName = userInfo.nickname.toString(),
+                    content = reviewContent,
+                    rating = rating
+                )
+            }
+
             val result = reviewRepository.create(reviewInfo)
 
             if (result is FireResult.Success) {
@@ -60,6 +72,23 @@ class ReviewViewModel(
                 Log.e("RVM", "findByCsIdOrderByCreateTime : ${result}")
             } else {
                 Log.e("RVM", "findByCsIdOrderByCreateTime : ${(result as FireResult.Failure).exception}")
+            }
+        }
+    }
+
+    /**
+     * 유저의 리뷰 목록
+     * */
+    fun findByUserId(userId: String) {
+        viewModelScope.launch {
+            val result = reviewRepository.findByUserId(userId)
+
+            if (result is FireResult.Success) {
+                _reviewList.value = result
+                Log.e("RVM", "findByUserId : ${result}")
+            } else {
+                Log.e("RVM", "findByUserId : ${result}")
+
             }
         }
     }

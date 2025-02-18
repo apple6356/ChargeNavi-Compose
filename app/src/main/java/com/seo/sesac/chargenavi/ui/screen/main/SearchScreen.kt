@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
-import com.seo.sesac.chargenavi.ui.screen.main.List.SearchListScreen
+import com.seo.sesac.chargenavi.ui.screen.main.list.SearchListScreen
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 

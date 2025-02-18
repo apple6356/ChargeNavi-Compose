@@ -1,15 +1,18 @@
 package com.seo.sesac.firestore.repository.firestore
 
 import com.seo.sesac.data.common.FireResult
+import com.seo.sesac.data.entity.ChargingStation
 import com.seo.sesac.data.entity.Favorite
 import com.seo.sesac.domain.repository.FavoriteRepository
-import com.seo.sesac.domain.repository.FireStoreRepository
 import com.seo.sesac.firestore.datasource.firestore.FavoriteDataSourceImpl
 
 class FavoriteRepositoryImpl(private val favoriteDataSourceImpl: FavoriteDataSourceImpl) :
     FavoriteRepository<Favorite> {
 
-    override suspend fun create(data: Favorite) =
+    override suspend fun create(
+        data: Favorite,
+        chargingStation: ChargingStation
+    ): FireResult<Favorite> =
         favoriteDataSourceImpl.create(data)
 
     override suspend fun delete(userId: String, csId: String) =
