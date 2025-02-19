@@ -3,7 +3,6 @@ package com.seo.sesac.chargenavi.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
-import com.seo.sesac.data.apimodule.EvCsService
 import com.seo.sesac.data.apimodule.RetrofitClient
 import com.seo.sesac.data.datasource.http.EvCsDataSource
 import com.seo.sesac.data.datasource.http.GeoCodeDataSource
@@ -35,7 +34,7 @@ private val mainViewModel by lazy {
 }
 
 private val evCsRepository by lazy {
-    EvCsRepository(EvCsDataSource(RetrofitClient.getRetrofitInstance()))
+    EvCsRepository(EvCsDataSource(RetrofitClient.getEvCsApiInstance()))
 }
 
 private val geoCodeRepository by lazy {

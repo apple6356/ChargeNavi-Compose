@@ -5,10 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.data.common.FireResult
+import com.seo.firestore.datasource.firestore.FavoriteDataSourceImpl
+import com.seo.firestore.repository.firestore.FavoriteRepositoryImpl
+import com.seo.sesac.chargenavi.common.apiKey
+import com.seo.sesac.data.apimodule.RetrofitClient
+import com.seo.sesac.data.common.RestResult
+import com.seo.sesac.data.datasource.http.EvCsDataSource
 import com.seo.sesac.data.entity.EvCsInfo
 import com.seo.sesac.data.entity.Favorite
-import com.seo.sesac.firestore.datasource.firestore.FavoriteDataSourceImpl
-import com.seo.sesac.firestore.repository.firestore.FavoriteRepositoryImpl
+import com.seo.sesac.data.repository.http.EvCsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -16,12 +21,17 @@ import kotlinx.coroutines.launch
  * 즐겨찾기와 관련된 viewmodel
  * */
 class FavoriteViewModel(
-    private val favoriteRepository: FavoriteRepositoryImpl = FavoriteRepositoryImpl(FavoriteDataSourceImpl())
+    private val favoriteRepository: FavoriteRepositoryImpl = FavoriteRepositoryImpl(FavoriteDataSourceImpl()),
+    private val evCsRepository: EvCsRepository = EvCsRepository(EvCsDataSource(RetrofitClient.getEvCsApiInstance()))
 ): ViewModel() {
 
     private val _favoriteList =
         MutableStateFlow<FireResult<MutableList<Favorite>>>(FireResult.DummyConstructor)
     val favoriteList get() = _favoriteList
+
+    private val _favoriteCsList =
+        MutableStateFlow<RestResult<MutableList<EvCsInfo>>>(RestResult.DummyConstructor)
+    val favoriteCsList get() = _favoriteCsList
 
 
     /**
@@ -32,8 +42,7 @@ class FavoriteViewModel(
             val favorite = Favorite(
                 userId = userId,
                 csId = csInfo.csId.toString(),
-                address = csInfo.address,
-                csNm = csInfo.csNm
+                address = csInfo.address
             )
 
             Log.e("fvm addFavorite", "favorite: $favorite")
@@ -65,13 +74,45 @@ class FavoriteViewModel(
             val result = favoriteRepository.findByUserId(userId)
             if (result is FireResult.Success) {
                 _favoriteList.value = FireResult.Success(result.data)
-                Log.e("fvm getFavoriteList", "_favoriteList: $_favoriteList , result: ${result.data}")
+                Log.e("FVM", "_favoriteList: ${result.data}")
+
+                // 즐겨찾기 충전소 검색
+                val csList = mutableListOf<EvCsInfo>()
+                result.data.forEach { favorite ->
+                    Log.e("FVM", "favorite: $favorite")
+                    val csResult = evCsRepository.getEvCsList(page = 1, perPage = 10, address = favorite.address, apiKey = apiKey)
+                    Log.e("FVM", "csResult: $csResult")
+                    csResult.data.forEach {
+                        csList.add(it)
+                    }
+                }
+                _favoriteCsList.value = RestResult.Success(csList)
+
+                Log.e("fvm getFavoriteList", "_favoriteList: ${_favoriteList.value} , result: ${result.data}")
+                Log.e("fvm getFavoriteList", "_favoriteCSList: ${_favoriteCsList.value}")
             } else {
                 _favoriteList.value = FireResult.DummyConstructor
                 showToast("불러오기 실패")
             }
         }
     }
+
+    /**
+     * csId 가 같은 충전소 정보를 Map 으로 그룹화
+     * */
+    fun findByCsId(csId: String): Map<Int, List<EvCsInfo>> =
+        favoriteCsList.value.let { result ->
+            Log.e("FVM findCSByCsId", "$result")
+            if (result is RestResult.Success) {
+                Log.e("Charging Station", "${result.data.groupBy { it.csId }}")
+                result.data
+                    .groupBy { it.csId }
+                    .filter { it.key == csId.toInt() }
+            } else {
+                Log.e("FVM findCSByCsId", "오류 발생")
+                emptyMap()
+            }
+        }
 
     /**
      * findByUserIdAndCsId 결과값이 Success이면 true 아니면 false를 리턴하는 메서드

@@ -1,4 +1,4 @@
-package com.seo.sesac.firestore.common
+package com.seo.firestore.common
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -16,5 +16,8 @@ class FirestoreCollectionFilter {
 
         private val searchHistoryCollection = Firebase.firestore.collection("search_history")
         fun getSearchHistoryCollection() = searchHistoryCollection
+
+        private val reviewCollection = Firebase.firestore.collection("reviews")
+        fun getReviewCollection() = reviewCollection
     }
 }

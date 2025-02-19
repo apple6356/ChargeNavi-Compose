@@ -34,7 +34,6 @@ import androidx.navigation.NavController
 import com.seo.sesac.data.entity.Review
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
-import com.seo.sesac.chargenavi.ui.screen.common.CircularProgress
 import com.seo.sesac.chargenavi.ui.screen.main.list.ReviewListScreen
 import com.seo.sesac.chargenavi.viewmodel.ReviewViewModel
 import com.seo.sesac.data.common.FireResult

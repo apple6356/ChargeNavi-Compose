@@ -1,12 +1,18 @@
 package com.seo.sesac.chargenavi.common
 
 import android.app.Application
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
+import coil3.disk.directory
+import coil3.memory.MemoryCache
 import com.google.firebase.FirebaseApp
 import com.naver.maps.map.NaverMapSdk
 import com.navercorp.nid.NaverIdLoginSDK
 import com.seo.sesac.chargenavi.BuildConfig
 
-class ChargeNaviApplication: Application() {
+class ChargeNaviApplication: Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
         super.onCreate()
         myContext = this
@@ -31,4 +37,21 @@ class ChargeNaviApplication: Application() {
         private lateinit var myContext: ChargeNaviApplication
         fun getApplication() = myContext
     }
+
+    /**
+     * coil image loader
+     * */
+    override fun newImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
+        .memoryCache {
+            MemoryCache.Builder()
+                .maxSizePercent(context, COIL_MEMORY_CACHE_SIZE_PERCENT)
+                .build()
+        }
+        .diskCache {
+            DiskCache.Builder()
+                .directory(filesDir.resolve(COIL_DISK_CACHE_DIR_NAME))
+                .maximumMaxSizeBytes(COIL_DISK_CACHE_MAX_SIZE.toLong())
+                .build()
+        }
+        .build()
 }

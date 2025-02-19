@@ -2,7 +2,6 @@ package com.seo.sesac.domain.repository
 
 import com.seo.sesac.data.common.FireResult
 
-
 /**
  * user repository interface
  * */

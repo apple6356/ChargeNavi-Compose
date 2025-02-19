@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,8 +54,8 @@ fun NaverMapScreen(
 ) {
 
     // 마커 리스트 상태 관리
-    var markerStates by rememberSaveable {
-        mutableStateOf<List<MarkerState>>(emptyList())
+    var latLngStates by rememberSaveable {
+        mutableStateOf<List<LatLng>>(emptyList())
     }
 
     // 카메라 포지션 상태
@@ -105,7 +104,7 @@ fun NaverMapScreen(
     LaunchedEffect(key1 = mainViewModel) {
         mainViewModel.evCsList.collectLatest { result ->
             if (result is RestResult.Success) {
-                markerStates = addMarkers(result.data.toList())
+                latLngStates = addMarkers(result.data.toList())
             }
         }
     }
@@ -125,10 +124,10 @@ fun NaverMapScreen(
     ) {
 
         // 화면에 마커 표시
-        markerStates.forEach { markerState ->
-            MarkerComposable(state = markerState,
+        latLngStates.forEach { latLngState ->
+            MarkerComposable(state = MarkerState(latLngState),
                 onClick = {
-                    val csId = mainViewModel.findByCoords(markerState.position)
+                    val csId = mainViewModel.findByCoords(latLngState)
                     navController.navigate(
                         "${NavigationRoute.Detail.routeName}/${csId}"
                     )
@@ -159,8 +158,6 @@ fun NaverMapScreen(
 }
 
 /** 마커 리스트를 반환 */
-fun addMarkers(markerList: List<EvCsInfo>): List<MarkerState> = markerList.map { evCsInfo ->
-    MarkerState(
-        position = LatLng(evCsInfo.latitude.toDouble(), evCsInfo.longitude.toDouble())
-    )
+fun addMarkers(markerList: List<EvCsInfo>) = markerList.map { evCsInfo ->
+    LatLng(evCsInfo.latitude.toDouble(), evCsInfo.longitude.toDouble())
 }

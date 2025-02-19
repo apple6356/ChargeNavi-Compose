@@ -9,6 +9,5 @@ data class Favorite(
     val id: String = UUID.randomUUID().toString(),
     val userId: String = "-1",
     val csId: String = "-1",
-    val address: String = "address",
-    val csNm: String = "csName"
+    val address: String = "address"
 )

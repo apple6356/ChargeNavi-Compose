@@ -11,7 +11,6 @@ import retrofit2.http.Query
 /** Rest Service */
 interface EvCsService {
 
-    // suspend 사용이유
     @GET("EvInfoServiceV2/v1/getEvSearchList")
     suspend fun getEvCsList(
         @Query("page") page: Int,
