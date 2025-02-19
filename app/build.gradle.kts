@@ -68,8 +68,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.datastore.preferences)
-    implementation(project(":data_android"))
     implementation(project(":domain"))
+    implementation(project(":data:firestore"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,22 +80,26 @@ dependencies {
 
     implementation(project(":data"))
 
-    implementation(libs.firebase.bom)
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore.ktx)
 
     implementation(libs.play.services.location)
 
     // naver map compose
-    implementation("io.github.fornewid:naver-map-compose:1.8.0")
-    implementation("io.github.fornewid:naver-map-location:21.0.2")
+    implementation(libs.naver.map.compose)
+    implementation(libs.naver.map.location)
 
     // naver login
     implementation(files("libs/oauth-5.10.0.aar"))
-    implementation("com.airbnb.android:lottie:3.1.0")
-    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation(libs.lottie)
+    implementation(libs.androidx.security.crypto)
 
     // permission
-    implementation("io.github.ParkSangGwon:tedpermission-normal:3.4.2")
+    implementation(libs.tedpermission.normal)
+
+    // coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 }
 
 fun getApiKey(propertyKey: String): String {

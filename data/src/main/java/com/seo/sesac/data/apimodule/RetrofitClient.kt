@@ -21,7 +21,7 @@ object RetrofitClient {
         .addInterceptor(httpLogging)
         .build()
 
-    fun getRetrofitInstance(): EvCsService {
+    fun getEvCsApiInstance(): EvCsService {
         if (!this::restService.isInitialized) {
             val retrofit = Retrofit.Builder()
                 .baseUrl(TARGET_ADDRESS)

@@ -22,6 +22,8 @@ import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
+import com.seo.sesac.data.common.RestResult
+import com.seo.sesac.data.entity.EvCsInfo
 import com.seo.sesac.data.entity.Favorite
 import com.seo.sesac.data.entity.UserInfo
 import kotlinx.coroutines.flow.collectLatest
@@ -68,6 +70,21 @@ fun FavoriteScreen(
                 favoriteList = result.data
             } else {
                 favoriteList = emptyList()
+            }
+        }
+    }
+
+    // 즐겨찾기 한 충전소 정보
+    var favoriteCsList by remember {
+        mutableStateOf(emptyList<EvCsInfo>())
+    }
+
+    LaunchedEffect(key1 = favoriteViewModel.favoriteCsList) {
+        favoriteViewModel.favoriteCsList.collectLatest { result ->
+            if (result is RestResult.Success) {
+                favoriteCsList = result.data
+            } else {
+                favoriteCsList = emptyList()
             }
         }
     }

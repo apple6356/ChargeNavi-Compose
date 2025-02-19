@@ -55,6 +55,7 @@ object NaverOAuth {
 
     fun logout() {
         NaverIdLoginSDK.logout()
+        showToast("로그아웃 되었습니다.")
     }
 
     fun getProfile(onSuccess: (NidProfileResponse) -> Unit) {

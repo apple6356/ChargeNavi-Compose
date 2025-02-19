@@ -1,7 +1,7 @@
 package com.seo.sesac.domain.usecase
 
-import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
+import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.domain.repository.UserRepository
 
 class UserUseCase(private val userRepository: UserRepository<UserInfo>) {
@@ -9,7 +9,7 @@ class UserUseCase(private val userRepository: UserRepository<UserInfo>) {
     /**
      * 기존 유저는 다시 저장하지 않고 반환 신규 유저는 firestore 에 저장 후 반환
      * */
-    suspend fun  loginNaverUserClass(user: UserInfo):FireResult<UserInfo> {
+    suspend fun  loginNaverUserClass(user: UserInfo): FireResult<UserInfo> {
         val userInfo = user.id?.let { userRepository.findById(it) }
 
         if (userInfo is FireResult.Success) {

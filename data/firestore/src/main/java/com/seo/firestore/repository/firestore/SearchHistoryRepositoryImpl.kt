@@ -1,9 +1,9 @@
-package com.seo.sesac.firestore.repository.firestore
+package com.seo.firestore.repository.firestore
 
+import com.seo.firestore.datasource.firestore.SearchHistoryDataSourceImpl
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.data.entity.SearchHistory
 import com.seo.sesac.domain.repository.FireStoreRepository
-import com.seo.sesac.firestore.datasource.firestore.SearchHistoryDataSourceImpl
 
 class SearchHistoryRepositoryImpl(private val searchHistoryDataSourceImpl: SearchHistoryDataSourceImpl):
     FireStoreRepository<SearchHistory> {

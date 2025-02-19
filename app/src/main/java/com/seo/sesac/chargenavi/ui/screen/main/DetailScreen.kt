@@ -38,9 +38,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
-import com.seo.sesac.chargenavi.ui.screen.common.ChargeInfoItem
+import com.seo.sesac.chargenavi.ui.screen.common.ChargeInfoScreen
 import com.seo.sesac.chargenavi.ui.screen.common.CircularProgress
-import com.seo.sesac.chargenavi.ui.screen.common.ReviewContentItem
+import com.seo.sesac.chargenavi.ui.screen.common.ReviewContentScreen
 import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
 import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
@@ -225,7 +225,7 @@ fun DetailScreen(
 
                 // 충전기 정보
                 csInfo.forEach { csInfo ->
-                    ChargeInfoItem(csInfo)
+                    ChargeInfoScreen(csInfo)
                 }
 
                 HorizontalDivider(
@@ -246,7 +246,7 @@ fun DetailScreen(
 
                 // 최신 리뷰 3개 보이기
                 reviewList.take(3).forEach {
-                    ReviewContentItem(it, userInfo.id.toString())
+                    ReviewContentScreen(it, userInfo.id.toString())
                 }
 
                 // 충전소의 모든 리뷰 보기

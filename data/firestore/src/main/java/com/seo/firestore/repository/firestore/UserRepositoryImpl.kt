@@ -1,10 +1,9 @@
-package com.seo.sesac.firestore.repository.firestore
+package com.seo.firestore.repository.firestore
 
+import com.seo.firestore.datasource.firestore.UserDataSourceImpl
 import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
-import com.seo.sesac.domain.repository.FireStoreRepository
 import com.seo.sesac.domain.repository.UserRepository
-import com.seo.sesac.firestore.datasource.firestore.UserDataSourceImpl
 
 /**
  * firestore user repository

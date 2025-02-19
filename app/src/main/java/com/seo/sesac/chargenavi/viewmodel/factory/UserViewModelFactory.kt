@@ -2,10 +2,10 @@ package com.seo.sesac.chargenavi.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.seo.firestore.datasource.firestore.UserDataSourceImpl
+import com.seo.firestore.repository.firestore.UserRepositoryImpl
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.domain.usecase.UserUseCase
-import com.seo.sesac.firestore.datasource.firestore.UserDataSourceImpl
-import com.seo.sesac.firestore.repository.firestore.UserRepositoryImpl
 
 @Suppress("UNCHECKED_CAST")
 val userViewModelFactory = object : ViewModelProvider.Factory {

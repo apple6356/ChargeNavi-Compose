@@ -1,6 +1,5 @@
 package com.seo.sesac.chargenavi.ui.screen.common
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.HorizontalDivider
@@ -31,10 +29,10 @@ import com.seo.sesac.chargenavi.common.ReadOnlyStarRatingBar
 import com.seo.sesac.chargenavi.common.showToast
 
 /**
- * 리뷰 내용 보
+ * 리뷰 출력 screen
  * */
 @Composable
-fun ReviewContentItem(
+fun ReviewContentScreen(
     reviewInfo: Review,
     userId: String
 ) {

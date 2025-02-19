@@ -1,5 +1,6 @@
 package com.seo.sesac.chargenavi.ui.screen.mypage
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
-import com.seo.sesac.chargenavi.common.showToast
+import com.seo.sesac.chargenavi.common.NaverOAuth
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
@@ -66,7 +68,7 @@ fun MyPageScreen(
     }
 
     // 유저 정보 읽기
-    LaunchedEffect(key1 = userViewModel) {
+    LaunchedEffect(key1 = userViewModel.userInfo) {
         userViewModel.userInfo.collectLatest { result ->
             if (result is FireResult.Success) {
                 userInfo = result.data
@@ -79,7 +81,8 @@ fun MyPageScreen(
             .fillMaxSize()
             .padding(
                 start = 10.dp,
-                end = 10.dp
+                end = 10.dp,
+                top = 20.dp
             )
     ) {
         Column {
@@ -154,6 +157,7 @@ fun MyPageScreen(
                 }
             )
 
+            /** 로그인 로그아웃 버튼 */
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -161,21 +165,37 @@ fun MyPageScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // 로그인 시 로그아웃 버튼, 로그인 되어 있지 않을 시 로그인 버튼 출력
-                // naver login button
-                Image(
-                    painter = painterResource(R.drawable.btn_naver_short_login),
-                    contentDescription = "네이버 로그인 버튼",
-                    modifier = Modifier
-                        .width(150.dp)
-                        .padding(
-                            top = 10.dp,
-                            bottom = 10.dp
-                        )
-                        .clickable { /* naver login */
-                            userViewModel.loginNaver(context)
-                        },
-                    contentScale = ContentScale.FillWidth
-                )
+                if (userInfo.id == "-1") { // naver login button
+                    Image(
+                        painter = painterResource(R.drawable.btn_naver_short_login),
+                        contentDescription = "네이버 로그인 버튼",
+                        modifier = Modifier
+                            .width(150.dp)
+                            .padding(
+                                top = 10.dp,
+                                bottom = 10.dp
+                            )
+                            .clickable { /* naver login */
+                                userViewModel.loginNaver(context)
+                            },
+                        contentScale = ContentScale.FillWidth
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.btn_naver_logout),
+                        contentDescription = "네이버 로그아웃",
+                        modifier = Modifier
+                            .width(150.dp)
+                            .padding(
+                                top = 10.dp,
+                                bottom = 10.dp
+                            )
+                            .clickable { /* naver login */
+                                userViewModel.logoutNaver()
+                            },
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
 
             }
 

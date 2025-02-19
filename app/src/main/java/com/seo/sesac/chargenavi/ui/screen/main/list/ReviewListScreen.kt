@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.seo.sesac.data.entity.Review
-import com.seo.sesac.chargenavi.ui.screen.common.ReviewContentItem
+import com.seo.sesac.chargenavi.ui.screen.common.ReviewContentScreen
 
 /**
  * 리뷰 목록 화면
@@ -27,7 +27,7 @@ fun ReviewListScreen(reviewList: List<Review>, userId: String) {
             )
     ) {
         items(reviewList) {review ->
-            ReviewContentItem(review, userId)
+            ReviewContentScreen(review, userId)
         }
     }
 }

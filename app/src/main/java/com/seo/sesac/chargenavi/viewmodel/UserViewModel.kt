@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.seo.sesac.chargenavi.common.NaverOAuth
 import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
+import com.seo.firestore.repository.firestore.UserRepositoryImpl
 import com.seo.sesac.domain.usecase.UserUseCase
-import com.seo.sesac.firestore.repository.firestore.UserRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -25,6 +25,10 @@ class UserViewModel(
     private val _userInfo =
         MutableStateFlow<FireResult<UserInfo>>(FireResult.DummyConstructor)
     val userInfo get() = _userInfo.asStateFlow()
+
+    private val _isLoggedIn =
+        MutableStateFlow(false)
+    val isLoggedIn get() = _isLoggedIn.asStateFlow()
 
     /**
      * naver login 메소드, 새로 로그인한 id면 유저 정보 저장
@@ -64,8 +68,16 @@ class UserViewModel(
         }
     }
 
-    fun logoutUser() {
+    /**
+     * 네이버 로그아웃
+     * */
+    fun logoutNaver() {
         _userInfo.value = FireResult.DummyConstructor
+        NaverOAuth.logout()
+    }
+
+    fun isLoggedIn() {
+        _isLoggedIn.value = NaverOAuth.isLoggedIn()
     }
 
 }
