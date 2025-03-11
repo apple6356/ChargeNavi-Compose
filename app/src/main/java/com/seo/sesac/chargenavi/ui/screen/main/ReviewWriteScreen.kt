@@ -151,36 +151,6 @@ fun ReviewWriteScreen(
                 color = Color.LightGray
             )
 
-            // 리뷰 작성 칸
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .verticalScroll(writeScrollState)
-                    .padding(
-                        vertical = 10.dp
-                    ),
-                value = reviewContent,
-                onValueChange = {
-                    reviewContent = it
-                },
-                textStyle = TextStyle(fontSize = 15.sp),
-                placeholder = {
-                    Text(
-                        text = "별점과 함께 리뷰 내용을 입력해주세요.",
-                        color = Color.LightGray
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    // TextField 바탕 색
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    // TextField 밑줄 색 설정, 투명
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
-            )
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -211,6 +181,36 @@ fun ReviewWriteScreen(
                     )
                 }
             }
+
+            // 리뷰 작성 칸
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .verticalScroll(writeScrollState)
+                    .padding(
+                        vertical = 10.dp
+                    ),
+                value = reviewContent,
+                onValueChange = {
+                    reviewContent = it
+                },
+                textStyle = TextStyle(fontSize = 15.sp),
+                placeholder = {
+                    Text(
+                        text = "별점과 함께 리뷰 내용을 입력해주세요.",
+                        color = Color.LightGray
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    // TextField 바탕 색
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    // TextField 밑줄 색 설정, 투명
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                )
+            )
         }
     }
 }

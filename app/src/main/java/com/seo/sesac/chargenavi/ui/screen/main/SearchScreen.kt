@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Clear
@@ -42,17 +43,12 @@ import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 @Composable
 fun SearchScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory)
+    mainViewModel: MainViewModel
 ) {
 
     // 검색 키워드
     var searchKeyword by remember {
         mutableStateOf("")
-    }
-
-    // 임시 데이터
-    val searchHistory = remember {
-        mutableStateListOf("서울", "인천공항", "부산")
     }
 
     Box(
@@ -112,6 +108,12 @@ fun SearchScreen(
                         // TextField 밑줄 색 설정, 투명
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            mainViewModel.getEvCsList(addr = searchKeyword)
+                            navController.popBackStack()
+                        }
                     )
                 )
             }
@@ -119,7 +121,7 @@ fun SearchScreen(
             HorizontalDivider()
 
             // 이전 검색 기록 목록
-            SearchListScreen(searchHistory)
+            SearchListScreen(emptyList())
 
         }
     }

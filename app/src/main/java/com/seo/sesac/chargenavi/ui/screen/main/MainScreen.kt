@@ -14,14 +14,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,19 +46,17 @@ import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
-import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
-import com.seo.sesac.data.common.RestResult
-import com.seo.sesac.data.entity.EvCsInfo
-import com.seo.sesac.data.entity.UserInfo
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * 시작 화면, 메인 화면
  * */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavController,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    mainViewModel: MainViewModel,
     userViewModel: UserViewModel = viewModel(factory = userViewModelFactory)
 ) {
 
@@ -76,7 +80,7 @@ fun MainScreen(
     ) {
 
         // NaverMap
-        NaverMapScreen(navController, context)
+        NaverMapScreen(navController, context, bottomSheetScaffoldState, mainViewModel)
 
         Column(
             modifier = Modifier
@@ -111,10 +115,10 @@ fun MainScreen(
                 )
             }
 
-
         }
 
     }
+
 
 }
 

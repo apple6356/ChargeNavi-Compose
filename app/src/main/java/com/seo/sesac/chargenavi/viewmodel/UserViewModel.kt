@@ -8,6 +8,7 @@ import com.seo.sesac.chargenavi.common.NaverOAuth
 import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
 import com.seo.firestore.repository.firestore.UserRepositoryImpl
+import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.domain.usecase.UserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -78,6 +79,18 @@ class UserViewModel(
 
     fun isLoggedIn() {
         _isLoggedIn.value = NaverOAuth.isLoggedIn()
+    }
+
+    /**
+     * 유저 업데이트
+     * */
+    fun userUpdate(userInfo: UserInfo) {
+        viewModelScope.launch {
+            val result = userRepository.update(userInfo)
+            if (result is FireResult.Success) {
+                showToast("유저 정보 업데이트 성공")
+            }
+        }
     }
 
 }

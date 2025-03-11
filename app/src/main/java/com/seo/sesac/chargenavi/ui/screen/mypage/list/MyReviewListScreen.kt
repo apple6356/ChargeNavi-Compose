@@ -25,16 +25,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seo.sesac.chargenavi.common.ReadOnlyStarRatingBar
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
+import com.seo.sesac.chargenavi.viewmodel.ReviewViewModel
 import com.seo.sesac.data.entity.Review
 
 /**
  * 자신이 쓴 리뷰 리스트
  * */
 @Composable
-fun MyReviewListScreen(reviewList: List<Review>) {
+fun MyReviewListScreen(
+    reviewList: List<Review>,
+    reviewViewModel: ReviewViewModel = viewModel()
+) {
 
     LazyColumn(
         modifier = Modifier
@@ -128,6 +133,7 @@ fun MyReviewListScreen(reviewList: List<Review>) {
                             IconButton(
                                 onClick = {
                                     // 리뷰 삭제
+                                    reviewViewModel.deleteReview(reviewInfo)
                                 }
                             ) {
                                 Icon(

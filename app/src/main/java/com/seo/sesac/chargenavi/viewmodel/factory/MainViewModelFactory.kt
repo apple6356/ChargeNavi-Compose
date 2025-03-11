@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.data.apimodule.RetrofitClient
 import com.seo.sesac.data.datasource.http.EvCsDataSource
-import com.seo.sesac.data.datasource.http.GeoCodeDataSource
+import com.seo.sesac.data.datasource.http.NaverMapsDataSource
 import com.seo.sesac.data.repository.http.EvCsRepository
-import com.seo.sesac.data.repository.http.GeoCodeRepository
+import com.seo.sesac.data.repository.http.NaverMapsRepository
 
 /**
  * MainViewModelFactory 작성
@@ -38,5 +38,5 @@ private val evCsRepository by lazy {
 }
 
 private val geoCodeRepository by lazy {
-    GeoCodeRepository(GeoCodeDataSource(RetrofitClient.getNaverGeoCodeInstance()))
+    NaverMapsRepository(NaverMapsDataSource(RetrofitClient.getNaverGeoCodeInstance()))
 }

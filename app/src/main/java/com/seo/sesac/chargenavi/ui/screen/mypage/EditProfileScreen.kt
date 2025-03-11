@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
+import com.seo.sesac.chargenavi.ui.screen.common.ProfileImageItem
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
@@ -58,11 +59,17 @@ fun EditProfileScreen(
         mutableStateOf(UserInfo())
     }
 
+    // 닉네임
+    var updateNickname by remember {
+        mutableStateOf("")
+    }
+
     // 유저 정보 읽기
     LaunchedEffect(key1 = userViewModel) {
         userViewModel.userInfo.collectLatest { result ->
             if (result is FireResult.Success) {
                 userInfo = result.data
+                updateNickname = userInfo.nickname.toString()
             }
         }
     }
@@ -102,7 +109,9 @@ fun EditProfileScreen(
                 )
 
                 // 프로필 사진
-                Image(
+                ProfileImageItem(userInfo.profileImage.toString())
+
+                /*Image(
                     painter = painterResource(R.drawable.image_user_default_profile_),
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
@@ -110,10 +119,10 @@ fun EditProfileScreen(
                         .padding(
                             vertical = 20.dp
                         )
-                )
+                )*/
 
                 // 프로필 사진 변경 버튼
-                TextButton(
+                /*TextButton(
                     onClick = {
                         // 프로필 사진 변경
                     }
@@ -127,19 +136,19 @@ fun EditProfileScreen(
                         text = "프로필 사진 변경",
                         color = Color.Blue
                     )
-                }
+                }*/
             }
 
-            // 닉네임 추후 TextField 로 변경
+            // 닉네임 변경
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
                         vertical = 20.dp
                     ),
-                value = userInfo.nickname.toString(),
+                value = updateNickname,
                 onValueChange = {
-                    userInfo.nickname = it
+                    updateNickname = it
                 },
                 label = {
                     Text(text = "닉네임 변경")
@@ -160,9 +169,11 @@ fun EditProfileScreen(
                 horizontalArrangement = Arrangement.End
             ) {
                 // 변경 사항을 저장하는 버튼
-                TextButton(onClick = {
-                        // 변경된 프로필 사진, 닉네임 저장
-                    }
+                TextButton(onClick = { // 변경된 프로필 사진, 닉네임 저장
+                    userInfo.nickname = updateNickname
+                    userViewModel.userUpdate(userInfo)
+                    navController.popBackStack()
+                }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Done,
