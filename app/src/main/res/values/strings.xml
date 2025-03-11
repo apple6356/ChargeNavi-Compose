@@ -8,6 +8,6 @@
     <string name="search_clear_button">검색창 초기화</string>
 
     <!-- Main Tab String -->
-    <string name="search_placeholder">충전소, 지역 검색</string>
+    <string name="search_placeholder">검색</string>
     
 </resources>

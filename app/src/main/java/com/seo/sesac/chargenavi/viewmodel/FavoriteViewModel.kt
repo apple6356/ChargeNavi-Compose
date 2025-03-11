@@ -1,5 +1,6 @@
 package com.seo.sesac.chargenavi.viewmodel
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 /**
  * 즐겨찾기와 관련된 viewmodel
  * */
+@SuppressLint("StaticFieldLeak")
 class FavoriteViewModel(
     private val favoriteRepository: FavoriteRepositoryImpl = FavoriteRepositoryImpl(FavoriteDataSourceImpl()),
     private val evCsRepository: EvCsRepository = EvCsRepository(EvCsDataSource(RetrofitClient.getEvCsApiInstance()))
@@ -32,7 +34,6 @@ class FavoriteViewModel(
     private val _favoriteCsList =
         MutableStateFlow<RestResult<MutableList<EvCsInfo>>>(RestResult.DummyConstructor)
     val favoriteCsList get() = _favoriteCsList
-
 
     /**
      * 즐겨찾기 등록

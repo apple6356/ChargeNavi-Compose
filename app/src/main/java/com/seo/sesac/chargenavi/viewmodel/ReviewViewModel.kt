@@ -93,4 +93,21 @@ class ReviewViewModel(
         }
     }
 
+    /**
+     * 리뷰 삭제
+     * */
+    fun deleteReview(review: Review) {
+        viewModelScope.launch {
+            val result = reviewRepository.deleteReview(review.id)
+
+            if (result is FireResult.Success) {
+                _reviewList.value = reviewRepository.findByUserId(review.userId)
+                Log.e("RVM", "deleteReview : ${result}")
+            } else {
+                Log.e("RVM", "deleteReview : ${result}")
+
+            }
+        }
+    }
+
 }

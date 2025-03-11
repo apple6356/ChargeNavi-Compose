@@ -164,7 +164,6 @@ fun DetailScreen(
                     )
                 }
 
-                // 충전소 이름
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),

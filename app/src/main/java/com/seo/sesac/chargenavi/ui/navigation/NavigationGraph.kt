@@ -1,5 +1,7 @@
 package com.seo.sesac.chargenavi.ui.navigation
 
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -8,6 +10,7 @@ import com.seo.sesac.chargenavi.ui.screen.favorite.FavoriteScreen
 import com.seo.sesac.chargenavi.ui.screen.main.DetailScreen
 import com.seo.sesac.chargenavi.ui.screen.main.MainScreen
 import com.seo.sesac.chargenavi.ui.screen.main.AllReviewScreen
+import com.seo.sesac.chargenavi.ui.screen.main.NaverMapScreen
 import com.seo.sesac.chargenavi.ui.screen.main.ReviewWriteScreen
 import com.seo.sesac.chargenavi.ui.screen.main.SearchScreen
 import com.seo.sesac.chargenavi.ui.screen.mypage.EditProfileScreen
@@ -19,7 +22,12 @@ import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 /**
  * viewModel 추가
  * */
-fun NavGraphBuilder.mainNavGraph(navController: NavController) {
+@OptIn(ExperimentalMaterial3Api::class)
+fun NavGraphBuilder.mainNavGraph(
+    navController: NavController,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    mainViewModel: MainViewModel
+) {
 
     navigation(
         startDestination = NavigationRoute.Main.routeName,
@@ -27,18 +35,18 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     ) {
         /* 메인 화면 */
         composable(route = NavigationRoute.Main.routeName) {
-            MainScreen(navController)
+            MainScreen(navController, bottomSheetScaffoldState, mainViewModel = mainViewModel)
         }
         /* 충전소 상세 화면, 충전소 id를 넘긴다 */
         composable(route = "${NavigationRoute.Detail.routeName}/{csId}") {
             val csId = it.arguments?.getString("csId")
             if (csId != null) {
-                DetailScreen(navController, csId = csId)
+                DetailScreen(navController, mainViewModel = mainViewModel, csId = csId)
             }
         }
         /* 검색 화면 */
         composable(route = NavigationRoute.Search.routeName) {
-            SearchScreen(navController)
+            SearchScreen(navController, mainViewModel = mainViewModel)
         }
         /* 리뷰 목록 화면 */
         composable(route = "${NavigationRoute.ReviewList.routeName}/{csId}/{userId}") {
@@ -52,7 +60,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         composable(route = "${NavigationRoute.ReviewWrite.routeName}/{csId}") {
             val csId = it.arguments?.getString("csId")
             if (csId != null) {
-                ReviewWriteScreen(navController, csId = csId)
+                ReviewWriteScreen(navController, mainViewModel = mainViewModel, csId = csId)
             }
         }
     }

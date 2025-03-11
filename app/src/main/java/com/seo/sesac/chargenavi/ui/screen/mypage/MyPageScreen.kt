@@ -43,6 +43,7 @@ import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.NaverOAuth
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
+import com.seo.sesac.chargenavi.ui.screen.common.ProfileImageItem
 import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
@@ -97,24 +98,28 @@ fun MyPageScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // 프로필 사진
-                    Image(
-                        painter = painterResource(R.drawable.image_user_default_profile_),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .size(
-                                70.dp
-                            )
-                            .padding(
-                                end = 10.dp
-                            )
-                    )
+                    if ((userInfo.id != "-1")) {
+                        ProfileImageItem(userInfo.profileImage.toString())
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.image_user_default_profile_),
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .size(
+                                    70.dp
+                                )
+                        )
+                    }
+
+
 
                     // 닉네임
                     Text(
                         text = (if (userInfo.id != "-1") userInfo.nickname else "게스트").toString(),
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 10.dp)
                     )
                 }
 
@@ -203,39 +208,3 @@ fun MyPageScreen(
     }
 }
 
-/**
- * mypage menu card
- * */
-@Composable
-fun MenuCard(title: String, description: String, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(
-                text = title,
-                fontSize = 30.sp
-            )
-
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = description
-            )
-        }
-    }
-
-    HorizontalDivider(
-        modifier = Modifier.dividerModifier()
-    )
-}

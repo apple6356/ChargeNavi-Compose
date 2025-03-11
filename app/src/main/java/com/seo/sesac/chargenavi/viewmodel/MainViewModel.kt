@@ -10,8 +10,9 @@ import com.seo.sesac.chargenavi.common.naverClientSecret
 import com.seo.sesac.data.entity.EvCsInfo
 import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.ResultAddrInfo
+import com.seo.sesac.data.entity.RouteInfo
 import com.seo.sesac.data.repository.http.EvCsRepository
-import com.seo.sesac.data.repository.http.GeoCodeRepository
+import com.seo.sesac.data.repository.http.NaverMapsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ import kotlinx.coroutines.launch
  * */
 class MainViewModel(
     private val evCsRepository: EvCsRepository,
-    private val geoCodeRepository: GeoCodeRepository
+    private val naverMapsRepository: NaverMapsRepository
 ) : ViewModel() {
 
     /** 충전소 정보 리스트 */
@@ -35,22 +36,30 @@ class MainViewModel(
         MutableStateFlow<RestResult<MutableList<ResultAddrInfo>>>(RestResult.DummyConstructor)
     val address get() = _address.asStateFlow()
 
+    /** 경로 정보 */
+    private val _routeInfo =
+        MutableStateFlow<RestResult<List<RouteInfo>>>(RestResult.DummyConstructor)
+    val routeInfo get() = _routeInfo.asStateFlow()
+
+    /** 충전소 정보 */
+    private val _csInfo =
+        MutableStateFlow<List<EvCsInfo>?>(null)
+    val csInfo get() = _csInfo
+
     /** 주소로 충전소 검색 후 충전소 목록 가져오는 함수 */
-    fun getEvCsList(page: Int = 1, perPage: Int = 10, addr: String = "서울") {
+    fun getEvCsList(page: Int = 1, perPage: Int = 400, addr: String = "서울") {
         viewModelScope.launch {
             if(_evCsList.value is RestResult.DummyConstructor) {
                 val response = evCsRepository.getEvCsList(page, perPage, addr, apiKey)
                 _evCsList.value = RestResult.Success(response.data.toMutableList())
-                Log.e("MVM getEvCsList", "${evCsList.value}")
             }
-            Log.e("MVM evCsList", "${evCsList.value}")
         }
     }
 
     /** 좌표 -> 주소 변환 */
     fun convertCoordsToAddress(latitude: Double, longitude: Double) {
         viewModelScope.launch {
-            val response = geoCodeRepository.coordsToAddress(latitude, longitude, naverClientId, naverClientSecret)
+            val response = naverMapsRepository.coordsToAddress(latitude, longitude, naverClientId, naverClientSecret)
             _address.value = RestResult.Success(response.results.toMutableList())
         }
     }
@@ -80,5 +89,27 @@ class MainViewModel(
             }
         }
 
+    /**
+     * 경로를 요청한다
+     * */
+    fun getRoute(start: String, goal: String) {
+        viewModelScope.launch {
+            val response = naverMapsRepository.getDirections(start, goal, naverClientId, naverClientSecret)
+
+            if (response.code == 0) {
+                _routeInfo.value = RestResult.Success(response.route.traoptimal)
+
+                Log.e("MVM", "getRoute, response: $response")
+                Log.e("MVM", "getRoute, routeInfo: ${routeInfo.value}")
+            }
+        }
+    }
+
+    /**
+     * 충전소 정보 저장
+     * */
+    fun setCsInfo(csInfo: List<EvCsInfo>) {
+        _csInfo.value = csInfo
+    }
 }
 

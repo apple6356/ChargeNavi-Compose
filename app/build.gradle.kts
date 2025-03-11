@@ -69,7 +69,8 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.datastore.preferences)
     implementation(project(":domain"))
-    implementation(project(":data:firestore"))
+    implementation(project(":data:firebase"))
+    implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -82,6 +83,7 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.messaging)
 
     implementation(libs.play.services.location)
 

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.8.0"
+agp = "8.9.0"
 coilCompose = "3.1.0"
 converterGson = "2.11.0"
 gson = "2.11.0"
@@ -11,12 +11,12 @@ espressoCore = "3.6.1"
 kotlinxSerializationJson = "1.8.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
-composeBom = "2025.01.01"
+composeBom = "2025.02.00"
 loggingInterceptor = "4.12.0"
 lottie = "3.1.0"
 naverMapCompose = "1.8.0"
 naverMapLocation = "21.0.2"
-navigationCompose = "2.8.6"
+navigationCompose = "2.8.7"
 okhttp = "4.12.0"
 playServicesLocation = "21.3.0"
 jetbrainsKotlinJvm = "2.1.0"
@@ -32,6 +32,7 @@ firebaseFirestore = "25.1.2"
 datastorePreferences = "1.1.2"
 securityCrypto = "1.1.0-alpha06"
 tedpermissionNormal = "3.4.2"
+firebaseMessagingKtx = "24.1.0"
 
 
 [libraries]
@@ -40,6 +41,7 @@ androidx-security-crypto = { module = "androidx.security:security-crypto", versi
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -73,6 +75,7 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 tedpermission-normal = { module = "io.github.ParkSangGwon:tedpermission-normal", version.ref = "tedpermissionNormal" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
