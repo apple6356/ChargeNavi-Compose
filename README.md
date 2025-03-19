@@ -7,11 +7,13 @@
 <h3>기술스택</h3>
 <ul>
   <li>Android Jetpack Compose</li>
-  <li>MVVM clean architecture</li>
-  <li>Retrofit2</li>
-  <li>Okhttp</li> 
-  <li>Gson</li> 
-  <li>NaverMap</li>
+  <li>MVVM/Clean Architecture</li>
+  <li>Gson/OkHttp/Retrofit2</li> 
+  <li>NaverMap/Fused Location</li>
+  <li>StateFlow</li>
+  <li>Firebase</li>
 </ul>
+
+<h3>기능</h3>
 
 
