@@ -58,7 +58,7 @@ fun SearchListScreen(searchHistory: List<String>) {
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Clear,
-                        contentDescription = stringResource(R.string.search_delete_button)
+                        contentDescription = null
                     )
                 }
             }

@@ -84,7 +84,7 @@ fun SearchScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                                contentDescription = stringResource(R.string.back_button)
+                                contentDescription = null
                             )
                         }
                     },
@@ -97,7 +97,7 @@ fun SearchScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Clear,
-                                contentDescription = stringResource(R.string.search_clear_button)
+                                contentDescription = null
                             )
                         }
                     },

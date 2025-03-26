@@ -1,6 +1,5 @@
 package com.seo.sesac.chargenavi.ui.screen.favorite
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,8 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,14 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.seo.sesac.chargenavi.ui.screen.common.ChargeInfoScreen
 import com.seo.sesac.chargenavi.ui.screen.common.CircularProgress
 import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
-import com.seo.sesac.chargenavi.viewmodel.MainViewModel
-import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 import com.seo.sesac.data.common.RestResult
-import com.seo.sesac.data.entity.EvCsInfo
 import com.seo.sesac.data.entity.Favorite
 import com.seo.sesac.data.entity.UserInfo
 
@@ -55,40 +50,19 @@ fun FavoriteCsScreen(
         mutableStateOf(true)
     }
 
-    // 즐겨찾기 상태 갱신
-    LaunchedEffect(key1 = userInfo) {
-        Log.e("FavoriteListScreen", "UserInfo: $userInfo , favoriteState $favoriteState")
-        if (!userInfo.id.equals("-1") && userInfo.id != null) {
-            favoriteState = favoriteViewModel.isFavorite(userInfo.id!!, favoriteInfo.csId)
-            Log.e("FavoriteCsScreen", "즐겨찾기 상태: $favoriteState")
-        }
-    }
+    // 즐겨찾기 된 충전소 리스트 상태
+    val favoriteCsListState by favoriteViewModel.favoriteCsList.collectAsStateWithLifecycle()
 
-    val favoriteCsListState by favoriteViewModel.favoriteCsList.collectAsState()
+    if (favoriteCsListState is RestResult.Success) {
 
-    // 충전소 정보
-    var csInfo by remember {
-        mutableStateOf<List<EvCsInfo>>(emptyList())
-    }
+        // 즐겨찾기 된 충전소 리스트
+        val favoriteCsList = (favoriteCsListState as RestResult.Success).data
+            .groupBy { it.csId } // csId 별로 그룹화 Map<Int(csId), List<EvCsInfo>>
+            .filter { it.key == favoriteInfo.csId.toInt() } // key(csId) 값이 favoriteInfo 의 csId 값과 같은 것만 필터링
+            .values // Map 의 values 만 추출
+            .flatten() // Collection<List<EvCsInfo>> 타입을 List<EvCsInfo>로 변환
+            .sortedBy { it.cpId } // cpId 순으로 정렬
 
-    /** viewModel 에서 충전소 정보 가져오기 */
-    LaunchedEffect(key1 = favoriteCsListState) {
-        Log.e("FavoriteCsScreen", "csInfo: $csInfo")
-        if (favoriteViewModel.favoriteCsList.value is RestResult.Success) {
-            Log.e("FavoriteCsScreen", "csInfo: $csInfo")
-
-            csInfo = favoriteViewModel.findByCsId(favoriteInfo.csId).values
-                .flatten() // flatten 을 사용해 여러 list 를 하나의 list 로 통합
-                .sortedBy { it.cpId } // cpId(충전기 Id) 순으로 정렬
-
-            Log.e("FavoriteCsScreen", "csInfo: $csInfo")
-        }
-    }
-
-
-    if (csInfo.isEmpty()) {
-        CircularProgress()
-    } else {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -110,7 +84,7 @@ fun FavoriteCsScreen(
 
                     // 충전소 이름
                     Text(
-                        text = csInfo.first().csNm,
+                        text = favoriteCsList.first().csNm,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -121,7 +95,7 @@ fun FavoriteCsScreen(
                             favoriteState = !favoriteState // 로그인 된 상태에서만 반응
                             if (userInfo.id != null && !userInfo.id.equals("-1")) {
                                 if (favoriteState) {
-                                    favoriteViewModel.addFavorite(userInfo.id!!, csInfo.first())
+                                    favoriteViewModel.addFavorite(userInfo.id!!, favoriteCsList.first() /*csInfo.first()*/)
                                 } else {
                                     favoriteViewModel.deleteFavorite(userInfo.id!!, favoriteInfo.csId)
                                 }
@@ -130,8 +104,8 @@ fun FavoriteCsScreen(
                     ) {
                         Icon(
                             imageVector = // 즐겨찾기 되어 있지 않다면 빈 하트
-                            if (favoriteState) Icons.Filled.Favorite
-                            else Icons.Filled.FavoriteBorder,
+                                if (favoriteState) Icons.Filled.Favorite
+                                else Icons.Filled.FavoriteBorder,
                             contentDescription = null,
                             tint = Color.Red
                         )
@@ -148,21 +122,23 @@ fun FavoriteCsScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Place,
-                        contentDescription = "주소",
+                        contentDescription = null,
                         tint = Color.LightGray
                     )
 
                     Text(
-                        text = csInfo.first().address,
+                        text = favoriteCsList.first().address,
                         fontSize = 13.sp
                     )
                 }
 
                 // 충전기 정보 표시 (아이콘 제외)
-                csInfo.forEach {
+                favoriteCsList.forEach {
                     ChargeInfoScreen(it)
                 }
             }
         }
+    } else {
+        CircularProgress()
     }
 }

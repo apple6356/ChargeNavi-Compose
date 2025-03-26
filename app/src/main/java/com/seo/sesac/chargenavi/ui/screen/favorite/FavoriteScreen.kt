@@ -11,22 +11,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.ui.screen.favorite.list.FavoriteListScreen
 import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
-import com.seo.sesac.data.common.RestResult
-import com.seo.sesac.data.entity.EvCsInfo
-import com.seo.sesac.data.entity.Favorite
-import com.seo.sesac.data.entity.UserInfo
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * 즐겨찾기 화면,
@@ -40,53 +37,20 @@ fun FavoriteScreen(
     userViewModel: UserViewModel = viewModel(factory = userViewModelFactory)
 ) {
 
+    // 유저 정보 상태
+    val userInfoState = userViewModel.userInfo.collectAsStateWithLifecycle()
+
     // 유저 정보
-    var userInfo by remember {
-        mutableStateOf(UserInfo())
+    val userInfo by remember {
+        mutableStateOf((userInfoState.value as? FireResult.Success)?.data)
     }
 
-    // 유저 정보 읽기
-    LaunchedEffect(key1 = userViewModel) {
-        userViewModel.userInfo.collectLatest { result ->
-            if (result is FireResult.Success) {
-                userInfo = result.data
-            }
-        }
-    }
+    // 즐겨찾기 리스트 상태
+    val favoriteListState = favoriteViewModel.favoriteList.collectAsStateWithLifecycle()
 
-    // 즐겨찾기 목록
-    var favoriteList by remember {
-        mutableStateOf(emptyList<Favorite>())
-    }
-
-    // 즐겨찾기 목록 불러오기
-    LaunchedEffect(key1 = userInfo) {
-        if (!userInfo.id.equals("-1")) {
-            userInfo.id?.let { favoriteViewModel.getFavoriteList(it) }
-        }
-
-        favoriteViewModel.favoriteList.collectLatest { result ->
-            if (result is FireResult.Success) {
-                favoriteList = result.data
-            } else {
-                favoriteList = emptyList()
-            }
-        }
-    }
-
-    // 즐겨찾기 한 충전소 정보
-    var favoriteCsList by remember {
-        mutableStateOf(emptyList<EvCsInfo>())
-    }
-
-    LaunchedEffect(key1 = favoriteViewModel.favoriteCsList) {
-        favoriteViewModel.favoriteCsList.collectLatest { result ->
-            if (result is RestResult.Success) {
-                favoriteCsList = result.data
-            } else {
-                favoriteCsList = emptyList()
-            }
-        }
+    // 즐겨찾기 정보를 Firestore 에서 불러온다
+    LaunchedEffect(favoriteViewModel) {
+        userInfo?.id?.let { favoriteViewModel.getFavoriteList(it) }
     }
 
     Box(
@@ -102,7 +66,7 @@ fun FavoriteScreen(
         ) {
 
             Text(
-                text = "즐겨찾기",
+                text = stringResource(R.string.favorite_text),
                 fontSize = 30.sp,
                 modifier = Modifier
                     .padding(
@@ -110,12 +74,12 @@ fun FavoriteScreen(
                     )
             )
 
-            if (favoriteList.isNotEmpty()) {
+            if (favoriteListState.value is FireResult.Success) {
                 // 즐겨찾기 된 충전소 리스트
-                FavoriteListScreen(favoriteList)
+                FavoriteListScreen(favoriteListState.value)
             } else {
                 Text(
-                    text = "즐겨찾기 된 충전소가 존재하지 않습니다.",
+                    text = stringResource(R.string.empty_favorite_list),
                     fontSize = 16.sp
                 )
             }

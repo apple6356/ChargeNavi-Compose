@@ -16,6 +16,7 @@ import com.seo.sesac.data.entity.EvCsInfo
 import com.seo.sesac.data.entity.Favorite
 import com.seo.sesac.data.repository.http.EvCsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -27,13 +28,15 @@ class FavoriteViewModel(
     private val evCsRepository: EvCsRepository = EvCsRepository(EvCsDataSource(RetrofitClient.getEvCsApiInstance()))
 ): ViewModel() {
 
+    /** 즐겨찾기 리스트 */
     private val _favoriteList =
         MutableStateFlow<FireResult<MutableList<Favorite>>>(FireResult.DummyConstructor)
-    val favoriteList get() = _favoriteList
+    val favoriteList get() = _favoriteList.asStateFlow()
 
+    /** 즐겨찾기 된 충전소 정보 리스트 */
     private val _favoriteCsList =
         MutableStateFlow<RestResult<MutableList<EvCsInfo>>>(RestResult.DummyConstructor)
-    val favoriteCsList get() = _favoriteCsList
+    val favoriteCsList get() = _favoriteCsList.asStateFlow()
 
     /**
      * 즐겨찾기 등록
@@ -101,7 +104,7 @@ class FavoriteViewModel(
     /**
      * csId 가 같은 충전소 정보를 Map 으로 그룹화
      * */
-    fun findByCsId(csId: String): Map<Int, List<EvCsInfo>> =
+    /*fun findByCsId(csId: String): Map<Int, List<EvCsInfo>> =
         favoriteCsList.value.let { result ->
             Log.e("FVM findCSByCsId", "$result")
             if (result is RestResult.Success) {
@@ -113,7 +116,7 @@ class FavoriteViewModel(
                 Log.e("FVM findCSByCsId", "오류 발생")
                 emptyMap()
             }
-        }
+        }*/
 
     /**
      * findByUserIdAndCsId 결과값이 Success이면 true 아니면 false를 리턴하는 메서드

@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
@@ -69,12 +70,14 @@ fun DetailScreen(
     csId: String
 ) {
 
-    // 충전소 정보
-    var csInfo by remember {
+    // 충전소 정보 상태
+    val csInfoState = mainViewModel.csInfo.collectAsStateWithLifecycle()
+
+/*    var csInfo by remember {
         mutableStateOf<List<EvCsInfo>>(emptyList())
     }
 
-    /** viewModel 에서 충전소 정보 가져오기 */
+    *//** viewModel 에서 충전소 정보 가져오기 *//*
     LaunchedEffect(key1 = mainViewModel.evCsList) {
         if (mainViewModel.evCsList.value is RestResult.Success) {
 
@@ -83,9 +86,9 @@ fun DetailScreen(
                 .flatten() // flatten 을 사용해 여러 list 를 하나의 list 로 통합
                 .sortedBy { it.cpId } // cpId(충전기 Id) 순으로 정렬
         }
-    }
+    }*/
 
-    // 유저 정보
+/*    // 유저 정보
     var userInfo by remember {
         mutableStateOf(UserInfo())
     }
@@ -97,6 +100,14 @@ fun DetailScreen(
                 userInfo = result.data
             }
         }
+    }*/
+
+    // 유저 정보 상태
+    val userInfoState = userViewModel.userInfo.collectAsStateWithLifecycle()
+
+    // 유저 정보
+    val userInfo by remember {
+        mutableStateOf((userInfoState.value as? FireResult.Success)?.data)
     }
 
     // 즐겨찾기 상태 관리
@@ -104,18 +115,20 @@ fun DetailScreen(
         mutableStateOf(false)
     }
 
-    // 즐겨찾기 상태 갱신
-    LaunchedEffect(key1 = userInfo) {
-
-        if (!userInfo.id.equals("-1") && userInfo.id != null) {
-            favoriteState = favoriteViewModel.isFavorite(userInfo.id!!, csId)
+    // 화면 실행 시 FireStore에서 데이터 불러오기
+    LaunchedEffect(Unit) {
+        // 현재 즐겨찾기 상태
+        if (!userInfo?.id.equals("-1") && userInfo?.id != null) {
+            favoriteState = favoriteViewModel.isFavorite(userInfo!!.id!!, csId)
         }
+
+        // 현재 충전소 리뷰 정보
+        reviewViewModel.findByCsIdOrderByCreateTime(csId)
     }
 
     // 현재 충전소의 리뷰 정보 불러오기
-    LaunchedEffect(Unit) {
-        reviewViewModel.findByCsIdOrderByCreateTime(csId)
-    }
+    /*LaunchedEffect(Unit) {
+    }*/
 
     // 리뷰 목록
     var reviewList by remember {
@@ -124,9 +137,9 @@ fun DetailScreen(
 
     // 리뷰 목록 가져오기
     LaunchedEffect(key1 = reviewViewModel.reviewList) {
-        reviewViewModel.reviewList.collectLatest {
-            if (it is FireResult.Success) {
-                reviewList = it.data.sortedByDescending { // 최신순 정렬
+        reviewViewModel.reviewList.collectLatest { result ->
+            if (result is FireResult.Success) {
+                reviewList = result.data.sortedByDescending { // 최신순 정렬
                     it.createTime
                 }
             }
@@ -136,9 +149,21 @@ fun DetailScreen(
     // 스크롤 상태
     val scrollState = rememberScrollState()
 
-    if (csInfo.isEmpty() && reviewList.isEmpty()) {
+    if (csInfoState.value.isNotEmpty() && reviewList.isNotEmpty()) {
+        Log.e("DetailScreen", "csInfoState.value: ${csInfoState.value}")
+        Log.e("DetailScreen", "reviewList: ${reviewList}")
         CircularProgress()
     } else {
+
+        Log.e("DetailScreen", "csInfoState.value: ${csInfoState.value}")
+        Log.e("DetailScreen", "reviewList: ${reviewList}")
+
+        val csInfo = csInfoState.value
+            .groupBy { it.csId }
+            .filter { it.key == csId.toInt() }
+            .values
+            .flatten()
+            .sortedBy { it.cpId }
 
         Box(
             modifier = Modifier
@@ -160,7 +185,7 @@ fun DetailScreen(
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = stringResource(R.string.back_button)
+                        contentDescription = null
                     )
                 }
 
@@ -183,11 +208,11 @@ fun DetailScreen(
                         onClick = {
                             favoriteState = !favoriteState
                             // 로그인 된 상태에서만 반응
-                            if (userInfo.id != null && !userInfo.id.equals("-1")) {
+                            if (userInfo?.id != null && !userInfo!!.id.equals("-1")) {
                                 if (favoriteState) {
-                                    favoriteViewModel.addFavorite(userInfo.id!!, csInfo.first())
+                                    favoriteViewModel.addFavorite(userInfo!!.id!!, csInfo.first())
                                 } else {
-                                    favoriteViewModel.deleteFavorite(userInfo.id!!, csId)
+                                    favoriteViewModel.deleteFavorite(userInfo!!.id!!, csId)
                                 }
                             }
                         }
@@ -212,7 +237,7 @@ fun DetailScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Place,
-                        contentDescription = "주소",
+                        contentDescription = null,
                         tint = Color.LightGray
                     )
 
@@ -238,14 +263,14 @@ fun DetailScreen(
                         .padding(
                             bottom = 20.dp
                         ),
-                    text = "리뷰",
+                    text = stringResource(R.string.review_text),
                     fontSize = 25.sp,
                     fontWeight = FontWeight.SemiBold
                 )
 
                 // 최신 리뷰 3개 보이기
                 reviewList.take(3).forEach {
-                    ReviewContentScreen(it, userInfo.id.toString())
+                    ReviewContentScreen(it, userInfo?.id.toString())
                 }
 
                 // 충전소의 모든 리뷰 보기
@@ -257,17 +282,17 @@ fun DetailScreen(
                 ) {
                     TextButton(
                         onClick = {
-                            navController.navigate("${NavigationRoute.ReviewList.routeName}/${csId}/${userInfo.id}")
+                            navController.navigate("${NavigationRoute.ReviewList.routeName}/${csId}/${userInfo?.id}")
                         }
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Add,
-                            contentDescription = "전체 리뷰 버튼",
+                            contentDescription = null,
                             tint = Color.Blue
                         )
 
                         Text(
-                            text = "리뷰 더보기",
+                            text = stringResource(R.string.all_review_button),
                             fontSize = 15.sp,
                             color = Color.Blue
                         )}

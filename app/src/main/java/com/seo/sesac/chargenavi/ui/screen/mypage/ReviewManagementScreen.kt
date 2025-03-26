@@ -100,7 +100,7 @@ fun ReviewManagementScreen(
             }
 
             Text(
-                text = "리뷰 관리",
+                text = stringResource(R.string.review_management_text),
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold
             )

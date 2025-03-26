@@ -66,7 +66,7 @@ fun MainScreen(
         if (NaverOAuth.isLoggedIn()) {
             Log.e("NaverOAuth", "로그인 된 상태")
             NaverOAuth.getProfile { result ->
-                // 네이버 로그인 되어있으면
+                // 네이버 로그인 상태면
                 userViewModel.findById(result.profile?.id.toString())
             }
         } else {
@@ -106,7 +106,7 @@ fun MainScreen(
             ) { // 검색 아이콘
                 Icon(
                     imageVector = Icons.Filled.Search,
-                    contentDescription = stringResource(R.string.search_icon)
+                    contentDescription = null
                 )
                 Text(
                     text = stringResource(R.string.search_placeholder),

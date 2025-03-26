@@ -17,10 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 
-private val starSize = 20.dp
-private val writeStarSize = 50.dp
-private val starSpacing = 4.dp
-
 /**
  * 별점을 매길 수 있는 바
  * */
@@ -36,8 +32,13 @@ fun ChangedStarRatingBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         for (i in 1..maxStars) {
+            // 현재 별이 선택되었는지
             val isSelected = i <= rating
+
+            // 별점이 선택되지 않았다면 빈 별
             val icon = if (isSelected) Icons.Filled.Star else Icons.Outlined.Star
+
+            // 별 선택 여부에 따라 색 변경
             val iconTintColor = if (isSelected) Color(0xFFFFC700) else Color(0xFFD3D3D3)
 
             Icon(
@@ -49,11 +50,12 @@ fun ChangedStarRatingBar(
                         selected = isSelected,
                         onClick = { onRatingChanged(i) }
                     )
-                    .size(writeStarSize)
+                    .size(WRITE_STAR_SIZE.dp)
             )
 
+            // 마지막 별이 아니면 별 사이 간격
             if (i < maxStars) {
-                Spacer(modifier = Modifier.width(starSpacing))
+                Spacer(modifier = Modifier.width(STAR_SPACING.dp))
             }
         }
     }
@@ -78,11 +80,11 @@ fun ReadOnlyStarRatingBar(
                 imageVector = icon,
                 contentDescription = null,
                 tint = iconTintColor,
-                modifier = Modifier.size(starSize)
+                modifier = Modifier.size(STAR_SIZE.dp)
             )
 
             if (i < maxStars) {
-                Spacer(modifier = Modifier.width(starSpacing))
+                Spacer(modifier = Modifier.width(STAR_SPACING.dp))
             }
         }
     }

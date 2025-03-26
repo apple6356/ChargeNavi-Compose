@@ -9,8 +9,8 @@ val cpTpMap = mapOf(
     "2" to "C타입(5핀)",
     "3" to "BC타입(5핀)",
     "4" to "BC타입(7핀)",
-    "5" to "DC차 데모",
-    "6" to "AC 3상",
+    "5" to "DC차데모",
+    "6" to "AC3상",
     "7" to "DC콤보",
     "8" to "DC차데모+DC콤보",
     "9" to "DC차데모+AC3상",
@@ -34,8 +34,8 @@ val cpStatMap = mapOf(
     "9" to "충전 예약",
 )
 
-// 충전 단자 이미지 리스트
 /**
+ * 충전 단자 이미지 리스트
  * DC차데모, AC3상, DC콤보, 완속
  * */
 val iconList = mutableListOf(
@@ -77,19 +77,19 @@ fun getChargeTypeIcon(cpTp: String): MutableList<Int> {
     val icons = mutableListOf<Int>()
 
     if (cpTp in listOf("5", "8", "9", "10")) {
-        icons.add(iconList.get(0)) // DC 차데모
+        icons.add(iconList[0]) // DC 차데모
     }
 
     if (cpTp in listOf("6", "9", "10")) {
-        icons.add(iconList.get(1)) // AC 3상
+        icons.add(iconList[1]) // AC 3상
     }
 
     if (cpTp in listOf("7", "8", "10")) {
-        icons.add(iconList.get(2)) // DC 콤보
+        icons.add(iconList[2]) // DC 콤보
     }
 
     if (icons.isEmpty()) {
-        icons.add(iconList.get(3)) // AC 단상 (완속)
+        icons.add(iconList[3]) // AC 단상 (완속)
     }
 
     return icons

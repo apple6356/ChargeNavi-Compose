@@ -33,7 +33,7 @@ fun ProfileImageItem(imageUrl: String) {
                 70.dp
             ),
         painter = asyncImagePainter,
-        contentDescription = "프로필 이미지",
+        contentDescription = null,
         contentScale = ContentScale.Crop
     )
 

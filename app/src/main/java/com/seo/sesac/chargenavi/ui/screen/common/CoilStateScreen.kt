@@ -10,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.seo.sesac.chargenavi.R
 
 @Composable
 fun CoilLoadingUI() {
@@ -36,6 +38,9 @@ fun CoilLoadingErrorUI() {
             .background(Color.DarkGray),
         contentAlignment = Alignment.Center
     ) {
-        Text("이미지 로드에 실패 했습니다!", color = Color.Red)
+        Text(
+            stringResource(R.string.image_load_failure),
+            color = Color.Red
+        )
     }
 }

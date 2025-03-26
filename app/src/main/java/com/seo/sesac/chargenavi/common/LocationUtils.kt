@@ -15,7 +15,6 @@ class LocationUtils(context: Context) {
     fun getCurrentLocation(callback: (Location?) -> Unit) {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
-                // Got last known location. In some rare situations this can be null.
                 callback(location)
             }
             .addOnFailureListener {

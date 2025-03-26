@@ -102,7 +102,7 @@ fun AllReviewScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "리뷰",
+                    text = stringResource(R.string.review_text),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -114,12 +114,12 @@ fun AllReviewScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
-                        contentDescription = "리뷰 작성 이동",
+                        contentDescription = null,
                         tint = Color.Blue
                     )
 
                     Text(
-                        text = "리뷰 작성",
+                        text = stringResource(R.string.review_write_text),
                         fontSize = 15.sp,
                         color = Color.Blue
                     )
@@ -132,13 +132,6 @@ fun AllReviewScreen(
 
             // 리뷰 목록
             ReviewListScreen(reviewList, userId)
-
-            // 리뷰 작성 이동 버튼
-            Button(onClick = {
-                navController.navigate(NavigationRoute.ReviewWrite.routeName)
-            }) {
-                Text(text = "리뷰 작성")
-            }
         }
     }
 

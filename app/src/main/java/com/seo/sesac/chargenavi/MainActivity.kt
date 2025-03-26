@@ -125,11 +125,11 @@ fun StartApp() {
             scaffoldState = bottomSheetScaffoldState,
             sheetContent = {
                 // bottom sheet 내용
-                BottomSheetDetailScreen(
-                    navController,
-                    bottomSheetScaffoldState,
-                    mainViewModel
-                )
+                if (bottomSheetScaffoldState.bottomSheetState.isVisible) {
+                    BottomSheetDetailScreen(
+                        navController, bottomSheetScaffoldState, mainViewModel
+                    )
+                }
             },
         ) {
             Scaffold(
@@ -156,7 +156,7 @@ fun StartApp() {
                                     icon = {
                                         Icon(
                                             imageVector = navigationItem.icon,
-                                            contentDescription = navigationItem.tabName,
+                                            contentDescription = null,
                                             tint = if (navigationItem.route == currentDestination?.route) {
                                                 Color.Blue
                                             } else {

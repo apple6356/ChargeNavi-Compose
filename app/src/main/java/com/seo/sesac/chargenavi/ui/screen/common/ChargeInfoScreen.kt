@@ -19,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.cpStatMap
 import com.seo.sesac.chargenavi.common.getChargeTypeIcon
 import com.seo.sesac.chargenavi.common.getChargeTypeString
@@ -89,7 +88,7 @@ fun ChargeInfoScreen(
 
                             Icon( // 충전기 타입 이미지
                                 painter = painterResource(icon),
-                                contentDescription = "충전 단자 이미지",
+                                contentDescription = null,
                                 tint = statusColor
                             )
 
@@ -102,7 +101,7 @@ fun ChargeInfoScreen(
                         } else {
                             Icon( // 충전기 타입 이미지
                                 painter = painterResource(icon),
-                                contentDescription = "충전 단자 이미지",
+                                contentDescription = null,
                                 tint = Color.LightGray
                             )
 

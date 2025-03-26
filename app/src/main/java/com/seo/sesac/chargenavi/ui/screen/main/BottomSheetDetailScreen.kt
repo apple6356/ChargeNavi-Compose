@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -19,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,12 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
+import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.LocationUtils
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
@@ -57,22 +57,16 @@ fun BottomSheetDetailScreen(
 ) {
 
     // 현재 충전소 정보
-    val csInfo by mainViewModel.csInfo.collectAsState()
+    val csInfo by mainViewModel.csInfo.collectAsStateWithLifecycle()
 
-    val csId = csInfo?.first()?.csId.toString()
+    val csId = csInfo.first().csId.toString()
+
+    // 유저 정보 상태
+    val userInfoState by userViewModel.userInfo.collectAsStateWithLifecycle()
 
     // 유저 정보
-    var userInfo by remember {
-        mutableStateOf(UserInfo())
-    }
-
-    // 유저 정보 읽기
-    LaunchedEffect(key1 = userViewModel) {
-        userViewModel.userInfo.collectLatest { result ->
-            if (result is FireResult.Success) {
-                userInfo = result.data
-            }
-        }
+    val userInfo by remember {
+        mutableStateOf((userInfoState as? FireResult.Success)?.data)
     }
 
     // 즐겨찾기 상태 관리
@@ -83,8 +77,8 @@ fun BottomSheetDetailScreen(
     // 즐겨찾기 상태 갱신
     LaunchedEffect(key1 = userInfo) {
 
-        if (!userInfo.id.equals("-1") && userInfo.id != null) {
-            favoriteState = favoriteViewModel.isFavorite(userInfo.id!!, csId)
+        if (!userInfo?.id.equals("-1") && userInfo?.id != null) {
+            favoriteState = favoriteViewModel.isFavorite(userInfo!!.id!!, csId)
         }
     }
 
@@ -104,7 +98,7 @@ fun BottomSheetDetailScreen(
                 // 현재 좌표를 주소로 변환
                 mainViewModel.convertCoordsToAddress(currentLatLng.latitude, currentLatLng.longitude)
             } else {
-                showToast("현재 위치를 파악할 수 없습니다")
+                showToast(R.string.current_location_not_found.toString())
             }
         }
     }
@@ -112,7 +106,7 @@ fun BottomSheetDetailScreen(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
     ) {
         Column {
             Row(
@@ -123,9 +117,9 @@ fun BottomSheetDetailScreen(
             ) {
 
                 // 충전소 이름
-                csInfo?.first()?.let {
+                csInfo.first().run {
                     Text(
-                        text = it.csNm, fontSize = 30.sp, fontWeight = FontWeight.Bold
+                        text = csNm, fontSize = 30.sp, fontWeight = FontWeight.Bold
                     )
                 }
 
@@ -134,11 +128,11 @@ fun BottomSheetDetailScreen(
                     onClick = {
                         favoriteState = !favoriteState
                         // 로그인 된 상태에서만 반응
-                        if (userInfo.id != null && !userInfo.id.equals("-1")) {
+                        if (userInfo?.id != null && !userInfo!!.id.equals("-1")) {
                             if (favoriteState) {
-                                favoriteViewModel.addFavorite(userInfo.id!!, csInfo!!.first())
+                                favoriteViewModel.addFavorite(userInfo!!.id!!, csInfo.first())
                             } else {
-                                favoriteViewModel.deleteFavorite(userInfo.id!!, csId)
+                                favoriteViewModel.deleteFavorite(userInfo!!.id!!, csId)
                             }
                         }
                     }
@@ -158,35 +152,35 @@ fun BottomSheetDetailScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                val goalLatLng = csInfo?.first()?.let { LatLng(it.latitude.toDouble(), it.longitude.toDouble()) }
+                val goalLatLng = csInfo.first().let { LatLng(it.latitude.toDouble(), it.longitude.toDouble()) }
 
                 TextButton(
                     onClick = {
-                        val csId = goalLatLng?.let { mainViewModel.findByCoords(it) }
+                        val csIdByCoords = goalLatLng.let { mainViewModel.findCsIdByCoords(it) }
                         navController.navigate(
-                            "${NavigationRoute.Detail.routeName}/${csId}"
+                            "${NavigationRoute.Detail.routeName}/${csIdByCoords}"
                         )
                     }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Info,
-                        contentDescription = ""
+                        contentDescription = null
                     )
-                    Text("충전소 상세")
+                    Text(stringResource(R.string.charge_station_detail))
                 }
 
                 TextButton(
                     onClick = {
                         val start = "${currentLatLng.longitude},${currentLatLng.latitude}"
-                        val goal = "${goalLatLng?.longitude},${goalLatLng?.latitude}"
+                        val goal = "${goalLatLng.longitude},${goalLatLng.latitude}"
                         mainViewModel.getRoute(start, goal)
                     }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
-                        contentDescription = ""
+                        contentDescription = null
                     )
-                    Text("경로 안내")
+                    Text(stringResource(R.string.route_guide))
                 }
             }
         }

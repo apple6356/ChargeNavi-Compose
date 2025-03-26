@@ -30,7 +30,7 @@ class ReviewViewModel(
     val reviewList get() = _reviewList
 
     private val _reviewCompleteEvent = MutableSharedFlow<Unit>()
-    val reviewCompleteEvent = _reviewCompleteEvent .asSharedFlow()
+    val reviewCompleteEvent = _reviewCompleteEvent.asSharedFlow()
 
     /**
      * 리뷰 저장
