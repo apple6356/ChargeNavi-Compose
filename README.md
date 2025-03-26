@@ -19,7 +19,9 @@
 <h3>기능</h3>
 
 지도 
-<img src="https://github.com/user-attachments/assets/bcf2dd7d-9c87-4350-b851-10fac007c918"> <br>
+<p>
+<img src="https://github.com/user-attachments/assets/bcf2dd7d-9c87-4350-b851-10fac007c918">
+</p>
 
 <p>
   <ul>
@@ -31,7 +33,9 @@
 </p>
 
 즐겨찾기
+<p>
 <img src="https://github.com/user-attachments/assets/c7541358-581c-4027-b67e-90fec4986301"> <br>
+</p>
 
 <p>
   <ul>
@@ -40,7 +44,9 @@
 </p>
 
 마이페이지
+<p>
 <img src="https://github.com/user-attachments/assets/e0512ac4-b874-44c2-b1a0-7b25080f3e1d"> <br>
+</p>
 
 <p>
   <ul>
