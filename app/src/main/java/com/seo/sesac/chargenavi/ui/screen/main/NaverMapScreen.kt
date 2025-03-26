@@ -13,7 +13,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
@@ -42,7 +42,6 @@ import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.EvCsInfo
-import com.seo.sesac.data.entity.RouteInfo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -58,8 +57,8 @@ fun NaverMapScreen(
     mainViewModel: MainViewModel
 ) {
 
-    // 마커 리스트 상태 관리
-    var latLngStates by rememberSaveable {
+    // 마커 리스트 상태
+    var latLngState by rememberSaveable {
         mutableStateOf<List<LatLng>>(emptyList())
     }
 
@@ -85,7 +84,7 @@ fun NaverMapScreen(
                 // 현재 좌표를 주소로 변환
                 mainViewModel.convertCoordsToAddress(currentLatLng.latitude, currentLatLng.longitude)
             } else {
-                showToast("현재 위치를 파악할 수 없습니다")
+                showToast(R.string.current_location_not_found.toString())
             }
         }
     }
@@ -99,81 +98,29 @@ fun NaverMapScreen(
                 if (location != null) {
                     mainViewModel.getEvCsList(addr = location.region.area2.name.trim())
                 } else {
-                    showToast("검색 결과가 없습니다.")
+                    showToast(R.string.search_result_not_found.toString())
                 }
             }
         }
     }
 
-    // 충전소 마커 상태 저장
-    LaunchedEffect(key1 = mainViewModel) {
-        mainViewModel.evCsList.collectLatest { result ->
-            if (result is RestResult.Success) {
-                latLngStates = addMarkers(result.data.toList())
-            }
-        }
+    // 충전소 정보 상태
+    val evCsListState = mainViewModel.evCsList.collectAsStateWithLifecycle()
+
+    if (evCsListState.value is RestResult.Success) {
+        latLngState = addMarkers((evCsListState.value as RestResult.Success).data.toList())
     }
 
-    /** 경로 표시 정보 */
-    val routeState = mainViewModel.routeInfo.collectAsState()
+    // 경로 표시 정보
+    val routeState = mainViewModel.routeInfo.collectAsStateWithLifecycle()
 
-    /** 마커 클릭 시 선택 좌표 */
+    // 마커 클릭 시 선택 좌표
     var selectedLatLng by remember {
         mutableStateOf<LatLng?>(null)
     }
 
-/*    *//** 출발지 좌표 *//*
-    var start by remember {
-        mutableStateOf("")
-    }
-
-    *//** 목적지 좌표 *//*
-    var goal by remember {
-        mutableStateOf("")
-    }*/
-
-    /*if (showButtons) {
-    // 마커 클릭 시 띄우는 버튼
-    selectedLatLng?.let { latLng ->
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextButton(
-                onClick = {
-                    val csId = mainViewModel.findByCoords(latLng)
-                    navController.navigate(
-                        "${NavigationRoute.Detail.routeName}/${csId}"
-                    )
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Info,
-                    contentDescription = ""
-                )
-                Text("충전소 상세")
-            }
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            TextButton(
-                onClick = {
-                    start = "${currentLatLng.longitude},${currentLatLng.latitude}"
-                    goal = "${latLng.longitude},${latLng.latitude}"
-                    mainViewModel.getRoute(start, goal)
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.LocationOn,
-                    contentDescription = ""
-                )
-                Text("경로 안내")
-            }
-        }
-    }
-}*/
-
-    val sheetScope = rememberCoroutineScope()
+    // 바텀 시트 코루틴 스코프
+    val bottomSheetScope = rememberCoroutineScope()
 
     // Naver Map Compose 사용하여 Naver Map 사용
     NaverMap(
@@ -189,33 +136,28 @@ fun NaverMapScreen(
     ) {
 
         // 화면에 마커 표시
-        latLngStates.forEach { latLngState ->
+        latLngState.forEach { latLngState ->
 
             MarkerComposable(
                 state = MarkerState(latLngState),
                 onClick = {
 
-                    val csId = mainViewModel.findByCoords(latLngState)
+                    val csId = mainViewModel.findCsIdByCoords(latLngState)
                     val csInfo = mainViewModel.findByCsId(csId.toString()).values
                         .flatten()
                         .sortedBy { it.cpId }
-
-                    /*start = "${currentLatLng.longitude},${currentLatLng.latitude}"
-                    goal = "${latLngState.longitude},${latLngState.latitude}"
-                    mainViewModel.getRoute(start, goal)*/
-
-                    /*val csId = mainViewModel.findByCoords(latLngState)
-                    navController.navigate(
-                        "${NavigationRoute.Detail.routeName}/${csId}"
-                    )*/
 
                     selectedLatLng = latLngState
 
                     if (csInfo.isNotEmpty()) {
                         mainViewModel.setCsInfo(csInfo)
 
-                        sheetScope.launch {
-                            bottomSheetScaffoldState.bottomSheetState.show()
+                        bottomSheetScope.launch {
+                            if (bottomSheetScaffoldState.bottomSheetState.isVisible) {
+                                bottomSheetScaffoldState.bottomSheetState.hide()
+                            } else {
+                                bottomSheetScaffoldState.bottomSheetState.expand()
+                            }
                         }
                     }
 
@@ -231,7 +173,7 @@ fun NaverMapScreen(
                     Icon( // 충전소 마커 아이콘
                         modifier = Modifier.size(25.dp),
                         painter = painterResource(R.drawable.marker_cs_image),
-                        contentDescription = "충전소 마커"
+                        contentDescription = null
                     )
                 }
 
@@ -240,7 +182,7 @@ fun NaverMapScreen(
         }
 
         if (routeState.value is RestResult.Success) {
-            val pathList = (routeState.value as RestResult.Success<List<RouteInfo>>).data.first().path
+            val pathList = (routeState.value as RestResult.Success).data.first().path
                 .map {
                     LatLng(it[1], it[0])
                 }

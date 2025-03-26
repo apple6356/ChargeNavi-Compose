@@ -21,9 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.seo.sesac.chargenavi.R
 import com.seo.sesac.data.entity.Review
 import com.seo.sesac.chargenavi.common.ReadOnlyStarRatingBar
 import com.seo.sesac.chargenavi.common.showToast
@@ -93,7 +95,7 @@ fun ReviewContentScreen(
                     IconButton(
                         onClick = {
                             if (reviewInfo.userId.equals(userId)) {
-                                showToast("자신의 리뷰는 추천할 수 없습니다.")
+                                showToast(R.string.cannot_self_recommend.toString())
                             } else {
                                 likeState = !likeState
                             }
@@ -101,7 +103,7 @@ fun ReviewContentScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.ThumbUp,
-                            contentDescription = "좋아요 버튼",
+                            contentDescription = null,
                             tint = if (likeState) Color.Blue else Color.LightGray
                         )
                     }

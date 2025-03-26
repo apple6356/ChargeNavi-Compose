@@ -103,7 +103,7 @@ fun EditProfileScreen(
             ) {
 
                 Text(
-                    text = "프로필 관리",
+                    text = stringResource(R.string.edit_profile_text),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -151,7 +151,7 @@ fun EditProfileScreen(
                     updateNickname = it
                 },
                 label = {
-                    Text(text = "닉네임 변경")
+                    Text(text = stringResource(R.string.edit_nickname_text))
                 },
                 colors = TextFieldDefaults.colors(
                     // TextField 바탕 색
@@ -177,11 +177,11 @@ fun EditProfileScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Done,
-                        contentDescription = "프로필 저장",
+                        contentDescription = null,
                         tint = Color.Blue
                     )
                     Text(
-                        text = "프로필 저장",
+                        text = stringResource(R.string.save_profile_text),
                         color = Color.Blue
                     )
                 }

@@ -22,7 +22,7 @@ import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
  * mypage menu card
  * */
 @Composable
-fun MenuCard(title: String, description: String, onClick: () -> Unit) {
+fun MenuCard(title: String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,7 +45,7 @@ fun MenuCard(title: String, description: String, onClick: () -> Unit) {
 
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = description
+                contentDescription = null
             )
         }
     }

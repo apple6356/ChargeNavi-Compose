@@ -56,11 +56,11 @@ fun SettingsScreen(navController: NavController) {
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = stringResource(R.string.back_button)
+                    contentDescription = null
                 )
             }
             Text(
-                text = "설정",
+                text = stringResource(R.string.settings_text),
                 fontSize = 30.sp
             )
 
@@ -71,7 +71,7 @@ fun SettingsScreen(navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "알림 설정")
+                Text(text = stringResource(R.string.alarm_settings_text))
 
                 Switch(
                     checked = checked,

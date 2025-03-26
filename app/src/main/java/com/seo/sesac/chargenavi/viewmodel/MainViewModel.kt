@@ -43,7 +43,7 @@ class MainViewModel(
 
     /** 충전소 정보 */
     private val _csInfo =
-        MutableStateFlow<List<EvCsInfo>?>(null)
+        MutableStateFlow<List<EvCsInfo>>(emptyList())
     val csInfo get() = _csInfo
 
     /** 주소로 충전소 검색 후 충전소 목록 가져오는 함수 */
@@ -65,7 +65,7 @@ class MainViewModel(
     }
 
     /** 해당 좌표의 csId 찾기 */
-    fun findByCoords(position: LatLng) =
+    fun findCsIdByCoords(position: LatLng) =
         evCsList.value.let { result ->
             if (result is RestResult.Success) {
                 result.data.find { it.latitude.toDouble() == position.latitude && it.longitude.toDouble() == position.longitude }?.csId
@@ -110,6 +110,8 @@ class MainViewModel(
      * */
     fun setCsInfo(csInfo: List<EvCsInfo>) {
         _csInfo.value = csInfo
+        Log.e("setCsInfo", "_csInfo: $_csInfo")
+        Log.e("setCsInfo", "csInfo: $csInfo")
     }
 }
 

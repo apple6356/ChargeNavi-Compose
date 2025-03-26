@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.ReadOnlyStarRatingBar
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
@@ -102,12 +103,12 @@ fun MyReviewListScreen(
                             // 좋아요 버튼
                             IconButton(
                                 onClick = {
-                                    showToast("자신의 리뷰는 추천할 수 없습니다.")
+                                    showToast(R.string.cannot_self_recommend.toString())
                                 }
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.ThumbUp,
-                                    contentDescription = "좋아요 버튼",
+                                    contentDescription = null,
                                     tint = Color.LightGray
                                 )
                             }
@@ -138,7 +139,7 @@ fun MyReviewListScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Delete,
-                                    contentDescription = "리뷰 삭제",
+                                    contentDescription = null,
                                     tint = Color.Red
                                 )
                             }

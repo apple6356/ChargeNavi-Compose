@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -116,7 +117,7 @@ fun MyPageScreen(
 
                     // 닉네임
                     Text(
-                        text = (if (userInfo.id != "-1") userInfo.nickname else "게스트").toString(),
+                        text = (if (userInfo.id != "-1") userInfo.nickname else stringResource(R.string.guest_text)).toString(),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 10.dp)
@@ -131,7 +132,7 @@ fun MyPageScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
-                        contentDescription = "설정",
+                        contentDescription = null,
                         modifier = Modifier
                             .size(30.dp)
                     )
@@ -143,8 +144,7 @@ fun MyPageScreen(
             )
 
             MenuCard(
-                title = "프로필 관리",
-                description = "프로필 관리",
+                title = stringResource(R.string.edit_profile_text),
                 onClick = {
                     if (userInfo.id != "-1") {
                         navController.navigate(NavigationRoute.EditProfile.routeName)
@@ -153,8 +153,7 @@ fun MyPageScreen(
             )
 
             MenuCard(
-                title = "리뷰 관리",
-                description = "리뷰 관리",
+                title = stringResource(R.string.review_management_text),
                 onClick = {
                     if (userInfo.id != "-1") {
                         navController.navigate(NavigationRoute.ReviewManagement.routeName)
@@ -173,7 +172,7 @@ fun MyPageScreen(
                 if (userInfo.id == "-1") { // naver login button
                     Image(
                         painter = painterResource(R.drawable.btn_naver_short_login),
-                        contentDescription = "네이버 로그인 버튼",
+                        contentDescription = null,
                         modifier = Modifier
                             .width(150.dp)
                             .padding(
@@ -188,7 +187,7 @@ fun MyPageScreen(
                 } else {
                     Image(
                         painter = painterResource(R.drawable.btn_naver_logout),
-                        contentDescription = "네이버 로그아웃",
+                        contentDescription = null,
                         modifier = Modifier
                             .width(150.dp)
                             .padding(

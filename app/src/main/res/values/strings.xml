@@ -1,13 +1,76 @@
 <resources>
     <string name="app_name">ChargeNavi</string>
 
+    <!-- number string -->
+<!--    <string name="zero">0</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="ten">10</string>-->
+
+    <!-- charge station string -->
+    <!--<string name="B_type_five_pins">B타입(5핀)</string>\
+    <string name="C_type_five_pins">C타입(5핀)</string>
+    <string name="BC_type_five_pins">BC타입(5핀)</string>
+    <string name="BC_type_seven_pins">BC타입(7핀)</string>
+    <string name="DC_chademo">DC차데모</string>
+    <string name="AC_three_phase">AC3상</string>
+    <string name="DC_combo">DC콤보</string>
+    <string name="DC_chademo_DC_combo">DC차데모+DC콤보</string>
+    <string name="DC_chademo_AC_three_phase">DC차데모+AC3상</string>
+    <string name="DC_chademo_DC_combo_AC_three_phase">DC차데모+DC콤보, AC3상</string>
+
+
+    <string name="standard_charge">완속</string>
+    <string name="quick_charge">급속</string>
+
+    <string name="status_checked_unable">상태확인불가</string>
+    <string name="charge_available">충전 가능</string>
+    <string name="charge_in_use">충전 중</string>
+    <string name="charge_out_of_service">고장/점검</string>
+    <string name="network_breakdown">통신 장애</string>
+    <string name="network_not_connected">통신미연결</string>
+    <string name="charge_reservation">충전 예약</string>-->
+
     <!-- common string -->
     <string name="back_button">뒤로가기</string>
     <string name="search_icon">검색</string>
     <string name="search_delete_button">검색 기록 삭제</string>
     <string name="search_clear_button">검색창 초기화</string>
+    <string name="image_load_failure">이미지 로드에 실패 했습니다</string>
+    <string name="cannot_self_recommend">자신의 리뷰는 추천할 수 없습니다</string>
 
-    <!-- Main Tab String -->
+    <!-- Main Tab -->
     <string name="search_placeholder">검색</string>
-    
+    <string name="search_result_not_found">검색 결과가 없습니다</string>
+    <string name="review_text">리뷰</string>
+    <string name="review_write_text">리뷰 작성</string>
+    <string name="current_location_not_found">현재 위치를 파악할 수 없습니다</string>
+    <string name="charge_station_detail">충전소 상세</string>
+    <string name="route_guide">경로 안내</string>
+    <string name="all_review_button">리뷰 더보기</string>
+    <string name="star_rating_write">별점을 입력해주세요</string>
+    <string name="review_write_guide">별점과 함께 리뷰 내용을 입력해주세요</string>
+    <string name="save_text">저장</string>
+
+    <!-- Favorite Tab -->
+    <string name="favorite_text">즐겨찾기</string>
+    <string name="empty_favorite_list">즐겨찾기 된 충전소가 존재하지 않습니다</string>
+
+    <!-- Mypage Tab -->
+    <string name="edit_profile_text">프로필 관리</string>
+    <string name="edit_nickname_text">닉네임 변경</string>
+    <string name="save_profile_text">프로필 저장</string>
+    <string name="guest_text">게스트</string>
+    <string name="review_management_text">리뷰 관리</string>
+    <string name="settings_text">설정</string>
+    <string name="alarm_settings_text">알림 설정</string>
+
+
 </resources>

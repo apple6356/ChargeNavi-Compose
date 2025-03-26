@@ -115,7 +115,7 @@ fun ReviewWriteScreen(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = stringResource(R.string.back_button)
+                    contentDescription = null
                 )
             }
 
@@ -124,7 +124,7 @@ fun ReviewWriteScreen(
             ) {
 
                 Text(
-                    text = "리뷰 작성",
+                    text = stringResource(R.string.review_write_text),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -162,7 +162,7 @@ fun ReviewWriteScreen(
                         // 작성된 리뷰 정보를 저장하고 DetailScreen 으로 화면 전환
 
                         if (rating <= 0) {
-                            showToast("별점을 입력해주세요.")
+                            showToast(R.string.star_rating_write.toString())
                         } else {
                             reviewViewModel.writeReview(reviewContent, rating, userInfo, csId)
                         }
@@ -170,12 +170,12 @@ fun ReviewWriteScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Done,
-                        contentDescription = "리뷰 저장",
+                        contentDescription = null,
                         tint = Color.Blue
                     )
 
                     Text(
-                        text = "저장",
+                        text = stringResource(R.string.save_text),
                         fontSize = 15.sp,
                         color = Color.Blue
                     )
@@ -198,7 +198,7 @@ fun ReviewWriteScreen(
                 textStyle = TextStyle(fontSize = 15.sp),
                 placeholder = {
                     Text(
-                        text = "별점과 함께 리뷰 내용을 입력해주세요.",
+                        text = stringResource(R.string.review_write_guide),
                         color = Color.LightGray
                     )
                 },
