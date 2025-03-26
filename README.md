@@ -18,4 +18,4 @@
 
 <h3>기능</h3>
 
-
+<img src=![Image](https://github.com/user-attachments/assets/bcf2dd7d-9c87-4350-b851-10fac007c918)>
