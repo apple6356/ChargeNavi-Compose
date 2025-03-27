@@ -10,6 +10,7 @@
 | :---:  | :---: |
 | Language | Kotlin |
 | Architecture | MVVM |
+| UI/UX | Jetpack Compose, Material3 UI/UX |
 | Networking | Retrofit2, OkHttp, GSON |
 | Jetpack | ViewModel, Navigation |
 | Asynchronous | Coroutine, Flow, StateFlow |
