@@ -20,7 +20,7 @@
 
 <h4>지도</h4>
 <p>
-<img src="https://github.com/user-attachments/assets/bcf2dd7d-9c87-4350-b851-10fac007c918">
+  <img src="https://github.com/user-attachments/assets/ea2cc891-8fe0-4f28-bbd7-922e82fa510e">
 </p>
 
 <p>
@@ -34,7 +34,7 @@
 
 <h4>즐겨찾기</h4>
 <p>
-<img src="https://github.com/user-attachments/assets/c7541358-581c-4027-b67e-90fec4986301"> <br>
+  <img src="https://github.com/user-attachments/assets/b1aea448-7a22-42fb-ae03-3718c8b19cc4">
 </p>
 
 <p>
@@ -45,7 +45,7 @@
 
 <h4>마이페이지</h4>
 <p>
-<img src="https://github.com/user-attachments/assets/e0512ac4-b874-44c2-b1a0-7b25080f3e1d"> <br>
+  <img src="https://github.com/user-attachments/assets/47a0ae8a-056d-42a6-a1a1-1184f729bf1c">
 </p>
 
 <p>
