@@ -26,7 +26,7 @@ class ReviewViewModel(
     /**
      * 리뷰 목록
      * */
-    val _reviewList = MutableStateFlow<FireResult<MutableList<Review>>>(FireResult.DummyConstructor)
+    private val _reviewList = MutableStateFlow<FireResult<MutableList<Review>>>(FireResult.DummyConstructor)
     val reviewList get() = _reviewList
 
     private val _reviewCompleteEvent = MutableSharedFlow<Unit>()

@@ -110,8 +110,6 @@ class MainViewModel(
      * */
     fun setCsInfo(csInfo: List<EvCsInfo>) {
         _csInfo.value = csInfo
-        Log.e("setCsInfo", "_csInfo: $_csInfo")
-        Log.e("setCsInfo", "csInfo: $csInfo")
     }
 }
 

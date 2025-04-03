@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
@@ -64,18 +65,12 @@ fun MyPageScreen(
 ) {
     val context = LocalContext.current
 
-    // 유저 정보
-    var userInfo by remember {
-        mutableStateOf(UserInfo())
-    }
+    // 유저 정보 상태
+    val userInfoState by userViewModel.userInfo.collectAsStateWithLifecycle()
 
-    // 유저 정보 읽기
-    LaunchedEffect(key1 = userViewModel.userInfo) {
-        userViewModel.userInfo.collectLatest { result ->
-            if (result is FireResult.Success) {
-                userInfo = result.data
-            }
-        }
+    // 유저 정보
+    val userInfo by remember {
+        mutableStateOf((userInfoState as? FireResult.Success)?.data ?: UserInfo())
     }
 
     Box(

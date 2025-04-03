@@ -15,6 +15,7 @@ import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.chargenavi.ui.screen.favorite.FavoriteCsScreen
 import com.seo.sesac.data.entity.Favorite
+import com.seo.sesac.data.entity.UserInfo
 
 /**
  * 즐겨찾기한 충전소 리스트
@@ -26,11 +27,11 @@ fun FavoriteListScreen(
 ) {
 
     // 유저 정보 상태
-    val userInfoState = userViewModel.userInfo.collectAsStateWithLifecycle()
+    val userInfoState by userViewModel.userInfo.collectAsStateWithLifecycle()
 
     // 유저 정보
     val userInfo by remember {
-        mutableStateOf((userInfoState.value as FireResult.Success).data)
+        mutableStateOf((userInfoState as? FireResult.Success)?.data ?: UserInfo())
     }
 
     LazyColumn(
