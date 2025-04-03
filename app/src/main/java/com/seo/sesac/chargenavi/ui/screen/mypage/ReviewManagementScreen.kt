@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
@@ -45,22 +46,16 @@ fun ReviewManagementScreen(
     userViewModel: UserViewModel = viewModel(factory = userViewModelFactory)
 ) {
 
-    // 유저 정보
-    var userInfo by remember {
-        mutableStateOf(UserInfo())
-    }
+    // 유저 정보 상태
+    val userInfoState by userViewModel.userInfo.collectAsStateWithLifecycle()
 
-    // 유저 정보 읽기
-    LaunchedEffect(key1 = userViewModel) {
-        userViewModel.userInfo.collectLatest { result ->
-            if (result is FireResult.Success) {
-                userInfo = result.data
-            }
-        }
+    // 유저 정보
+    val userInfo by remember {
+        mutableStateOf((userInfoState as? FireResult.Success)?.data ?: UserInfo())
     }
 
     // 현재 충전소의 리뷰 정보 불러오기
-    LaunchedEffect(userInfo) {
+    LaunchedEffect(userInfoState) {
         if (userInfo.id != "-1") {
             reviewViewModel.findByUserId(userInfo.id.toString())
         }

@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
@@ -54,24 +55,17 @@ fun EditProfileScreen(
     userViewModel: UserViewModel = viewModel(factory = userViewModelFactory)
 ) {
 
+    // 유저 정보 상태
+    val userInfoState by userViewModel.userInfo.collectAsStateWithLifecycle()
+
     // 유저 정보
-    var userInfo by remember {
-        mutableStateOf(UserInfo())
+    val userInfo by remember {
+        mutableStateOf((userInfoState as? FireResult.Success)?.data ?: UserInfo())
     }
 
     // 닉네임
     var updateNickname by remember {
         mutableStateOf("")
-    }
-
-    // 유저 정보 읽기
-    LaunchedEffect(key1 = userViewModel) {
-        userViewModel.userInfo.collectLatest { result ->
-            if (result is FireResult.Success) {
-                userInfo = result.data
-                updateNickname = userInfo.nickname.toString()
-            }
-        }
     }
 
     Box(

@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.data.entity.Review
@@ -55,20 +56,12 @@ fun AllReviewScreen(
         reviewViewModel.findByCsIdOrderByCreateTime(csId)
     }
 
-    // 리뷰 목록
-    var reviewList by remember {
-        mutableStateOf<List<Review>>(emptyList())
-    }
+    // 리뷰 목록 상태
+    val reviewListState by reviewViewModel.reviewList.collectAsStateWithLifecycle()
 
-    // 리뷰 목록 가져오기
-    LaunchedEffect(key1 = reviewViewModel.reviewList) {
-        reviewViewModel.reviewList.collectLatest {
-            if (it is FireResult.Success) {
-                reviewList = it.data.sortedByDescending {
-                    it.createTime
-                }
-            }
-        }
+    // 리뷰 목록
+    val reviewList by remember(reviewListState) {
+        mutableStateOf((reviewListState as? FireResult.Success)?.data?.sortedByDescending { it.createTime } ?: emptyList())
     }
 
     Box(

@@ -70,44 +70,19 @@ fun DetailScreen(
     csId: String
 ) {
 
+    Log.e("DetailScreen", "csId : $csId")
+
     // 충전소 정보 상태
-    val csInfoState = mainViewModel.csInfo.collectAsStateWithLifecycle()
-
-/*    var csInfo by remember {
-        mutableStateOf<List<EvCsInfo>>(emptyList())
+    var csInfo by remember {
+        mutableStateOf(emptyList<EvCsInfo>())
     }
-
-    *//** viewModel 에서 충전소 정보 가져오기 *//*
-    LaunchedEffect(key1 = mainViewModel.evCsList) {
-        if (mainViewModel.evCsList.value is RestResult.Success) {
-
-            Log.e("csId Detail", csId)
-            csInfo = mainViewModel.findByCsId(csId).values
-                .flatten() // flatten 을 사용해 여러 list 를 하나의 list 로 통합
-                .sortedBy { it.cpId } // cpId(충전기 Id) 순으로 정렬
-        }
-    }*/
-
-/*    // 유저 정보
-    var userInfo by remember {
-        mutableStateOf(UserInfo())
-    }
-
-    // 유저 정보 읽기
-    LaunchedEffect(key1 = userViewModel) {
-        userViewModel.userInfo.collectLatest { result ->
-            if (result is FireResult.Success) {
-                userInfo = result.data
-            }
-        }
-    }*/
 
     // 유저 정보 상태
-    val userInfoState = userViewModel.userInfo.collectAsStateWithLifecycle()
+    val userInfoState by userViewModel.userInfo.collectAsStateWithLifecycle()
 
     // 유저 정보
     val userInfo by remember {
-        mutableStateOf((userInfoState.value as? FireResult.Success)?.data)
+        mutableStateOf((userInfoState as? FireResult.Success)?.data ?: UserInfo())
     }
 
     // 즐겨찾기 상태 관리
@@ -118,52 +93,41 @@ fun DetailScreen(
     // 화면 실행 시 FireStore에서 데이터 불러오기
     LaunchedEffect(Unit) {
         // 현재 즐겨찾기 상태
-        if (!userInfo?.id.equals("-1") && userInfo?.id != null) {
-            favoriteState = favoriteViewModel.isFavorite(userInfo!!.id!!, csId)
+        if (!userInfo.id.equals("-1") && userInfo.id != null) {
+            favoriteViewModel.isFavorite(userInfo.id!!, csId)
         }
+
+        favoriteState = favoriteViewModel.isFavorite.value
 
         // 현재 충전소 리뷰 정보
         reviewViewModel.findByCsIdOrderByCreateTime(csId)
+
+        mainViewModel.csInfo.collectLatest {
+            csInfo = it
+                .groupBy { it.csId }
+                .filter { it.key == csId.toInt() }
+                .values
+                .flatten()
+                .sortedBy { it.cpId }
+        }
     }
 
-    // 현재 충전소의 리뷰 정보 불러오기
-    /*LaunchedEffect(Unit) {
-    }*/
+    // 리뷰 목록 상태
+    val reviewListState by reviewViewModel.reviewList.collectAsStateWithLifecycle()
 
     // 리뷰 목록
-    var reviewList by remember {
-        mutableStateOf<List<Review>>(emptyList())
-    }
-
-    // 리뷰 목록 가져오기
-    LaunchedEffect(key1 = reviewViewModel.reviewList) {
-        reviewViewModel.reviewList.collectLatest { result ->
-            if (result is FireResult.Success) {
-                reviewList = result.data.sortedByDescending { // 최신순 정렬
-                    it.createTime
-                }
-            }
-        }
+    val reviewList by remember(reviewListState) {
+        mutableStateOf((reviewListState as? FireResult.Success)?.data?.sortedByDescending { it.createTime } ?: emptyList())
     }
 
     // 스크롤 상태
     val scrollState = rememberScrollState()
 
-    if (csInfoState.value.isNotEmpty() && reviewList.isNotEmpty()) {
-        Log.e("DetailScreen", "csInfoState.value: ${csInfoState.value}")
-        Log.e("DetailScreen", "reviewList: ${reviewList}")
+    if (csInfo.isEmpty()) {
         CircularProgress()
     } else {
 
-        Log.e("DetailScreen", "csInfoState.value: ${csInfoState.value}")
-        Log.e("DetailScreen", "reviewList: ${reviewList}")
-
-        val csInfo = csInfoState.value
-            .groupBy { it.csId }
-            .filter { it.key == csId.toInt() }
-            .values
-            .flatten()
-            .sortedBy { it.cpId }
+        Log.e("reviewList", "$reviewList")
 
         Box(
             modifier = Modifier
@@ -208,11 +172,11 @@ fun DetailScreen(
                         onClick = {
                             favoriteState = !favoriteState
                             // 로그인 된 상태에서만 반응
-                            if (userInfo?.id != null && !userInfo!!.id.equals("-1")) {
+                            if (userInfo.id != null && !userInfo.id.equals("-1")) {
                                 if (favoriteState) {
-                                    favoriteViewModel.addFavorite(userInfo!!.id!!, csInfo.first())
+                                    favoriteViewModel.addFavorite(userInfo.id!!, csInfo.first())
                                 } else {
-                                    favoriteViewModel.deleteFavorite(userInfo!!.id!!, csId)
+                                    favoriteViewModel.deleteFavorite(userInfo.id!!, csId)
                                 }
                             }
                         }
@@ -270,7 +234,7 @@ fun DetailScreen(
 
                 // 최신 리뷰 3개 보이기
                 reviewList.take(3).forEach {
-                    ReviewContentScreen(it, userInfo?.id.toString())
+                    ReviewContentScreen(it, userInfo.id.toString())
                 }
 
                 // 충전소의 모든 리뷰 보기
@@ -282,7 +246,7 @@ fun DetailScreen(
                 ) {
                     TextButton(
                         onClick = {
-                            navController.navigate("${NavigationRoute.ReviewList.routeName}/${csId}/${userInfo?.id}")
+                            navController.navigate("${NavigationRoute.ReviewList.routeName}/${csId}/${userInfo.id}")
                         }
                     ) {
                         Icon(

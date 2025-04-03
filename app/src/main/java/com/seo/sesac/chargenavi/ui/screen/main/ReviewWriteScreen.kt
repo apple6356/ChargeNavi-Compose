@@ -34,6 +34,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
@@ -71,25 +72,12 @@ fun ReviewWriteScreen(
         mutableStateOf(0)
     }
 
+    // 유저 정보 상태
+    val userInfoState by userViewModel.userInfo.collectAsStateWithLifecycle()
+
     // 유저 정보
-    var userInfo by remember {
-        mutableStateOf(UserInfo())
-    }
-
-    // 유저 정보 읽기
-    LaunchedEffect(key1 = userViewModel) {
-        userViewModel.userInfo.collectLatest { result ->
-            if (result is FireResult.Success) {
-                userInfo = result.data
-            }
-        }
-    }
-
-    // 리뷰 저장 시 뒤로 이동
-    LaunchedEffect(key1 = reviewViewModel.reviewCompleteEvent) {
-        reviewViewModel.reviewCompleteEvent.collect {
-            navController.popBackStack()
-        }
+    val userInfo by remember {
+        mutableStateOf((userInfoState as? FireResult.Success)?.data ?: UserInfo())
     }
 
     // 입력 영역 스크롤 상태
@@ -165,6 +153,7 @@ fun ReviewWriteScreen(
                             showToast(R.string.star_rating_write.toString())
                         } else {
                             reviewViewModel.writeReview(reviewContent, rating, userInfo, csId)
+                            navController.popBackStack()
                         }
                     }
                 ) {

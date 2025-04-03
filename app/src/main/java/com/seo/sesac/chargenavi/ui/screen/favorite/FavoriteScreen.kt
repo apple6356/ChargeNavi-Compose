@@ -24,6 +24,7 @@ import com.seo.sesac.chargenavi.viewmodel.FavoriteViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
+import com.seo.sesac.data.entity.UserInfo
 
 /**
  * 즐겨찾기 화면,
@@ -38,11 +39,11 @@ fun FavoriteScreen(
 ) {
 
     // 유저 정보 상태
-    val userInfoState = userViewModel.userInfo.collectAsStateWithLifecycle()
+    val userInfoState by userViewModel.userInfo.collectAsStateWithLifecycle()
 
     // 유저 정보
     val userInfo by remember {
-        mutableStateOf((userInfoState.value as? FireResult.Success)?.data)
+        mutableStateOf((userInfoState as? FireResult.Success)?.data ?: UserInfo())
     }
 
     // 즐겨찾기 리스트 상태
@@ -50,7 +51,7 @@ fun FavoriteScreen(
 
     // 즐겨찾기 정보를 Firestore 에서 불러온다
     LaunchedEffect(favoriteViewModel) {
-        userInfo?.id?.let { favoriteViewModel.getFavoriteList(it) }
+        userInfo.id?.let { favoriteViewModel.getFavoriteList(it) }
     }
 
     Box(

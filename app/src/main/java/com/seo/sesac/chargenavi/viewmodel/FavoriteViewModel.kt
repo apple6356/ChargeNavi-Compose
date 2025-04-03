@@ -24,9 +24,11 @@ import kotlinx.coroutines.launch
  * */
 @SuppressLint("StaticFieldLeak")
 class FavoriteViewModel(
-    private val favoriteRepository: FavoriteRepositoryImpl = FavoriteRepositoryImpl(FavoriteDataSourceImpl()),
+    private val favoriteRepository: FavoriteRepositoryImpl = FavoriteRepositoryImpl(
+        FavoriteDataSourceImpl()
+    ),
     private val evCsRepository: EvCsRepository = EvCsRepository(EvCsDataSource(RetrofitClient.getEvCsApiInstance()))
-): ViewModel() {
+) : ViewModel() {
 
     /** 즐겨찾기 리스트 */
     private val _favoriteList =
@@ -38,15 +40,18 @@ class FavoriteViewModel(
         MutableStateFlow<RestResult<MutableList<EvCsInfo>>>(RestResult.DummyConstructor)
     val favoriteCsList get() = _favoriteCsList.asStateFlow()
 
+    /** 즐겨찾기 상태 */
+    private var _isFavorite =
+        MutableStateFlow(false)
+    val isFavorite get() = _isFavorite.asStateFlow()
+
     /**
      * 즐겨찾기 등록
      * */
-     fun addFavorite(userId: String, csInfo: EvCsInfo) {
+    fun addFavorite(userId: String, csInfo: EvCsInfo) {
         viewModelScope.launch {
             val favorite = Favorite(
-                userId = userId,
-                csId = csInfo.csId.toString(),
-                address = csInfo.address
+                userId = userId, csId = csInfo.csId.toString(), address = csInfo.address
             )
 
             Log.e("fvm addFavorite", "favorite: $favorite")
@@ -84,7 +89,12 @@ class FavoriteViewModel(
                 val csList = mutableListOf<EvCsInfo>()
                 result.data.forEach { favorite ->
                     Log.e("FVM", "favorite: $favorite")
-                    val csResult = evCsRepository.getEvCsList(page = 1, perPage = 10, address = favorite.address, apiKey = apiKey)
+                    val csResult = evCsRepository.getEvCsList(
+                        page = 1,
+                        perPage = 10,
+                        address = favorite.address,
+                        apiKey = apiKey
+                    )
                     Log.e("FVM", "csResult: $csResult")
                     csResult.data.forEach {
                         csList.add(it)
@@ -92,19 +102,20 @@ class FavoriteViewModel(
                 }
                 _favoriteCsList.value = RestResult.Success(csList)
 
-                Log.e("fvm getFavoriteList", "_favoriteList: ${_favoriteList.value} , result: ${result.data}")
+                Log.e(
+                    "fvm getFavoriteList",
+                    "_favoriteList: ${_favoriteList.value} , result: ${result.data}"
+                )
                 Log.e("fvm getFavoriteList", "_favoriteCSList: ${_favoriteCsList.value}")
             } else {
                 _favoriteList.value = FireResult.DummyConstructor
-                showToast("불러오기 실패")
             }
         }
     }
 
     /**
      * csId 가 같은 충전소 정보를 Map 으로 그룹화
-     * */
-    /*fun findByCsId(csId: String): Map<Int, List<EvCsInfo>> =
+     * *//*fun findByCsId(csId: String): Map<Int, List<EvCsInfo>> =
         favoriteCsList.value.let { result ->
             Log.e("FVM findCSByCsId", "$result")
             if (result is RestResult.Success) {
@@ -119,9 +130,17 @@ class FavoriteViewModel(
         }*/
 
     /**
-     * findByUserIdAndCsId 결과값이 Success이면 true 아니면 false를 리턴하는 메서드
+     * findByUserIdAndCsId 결과값이 Success true 아니면 false 리턴하는 함
      * */
-    suspend fun isFavorite(userId: String, csId: String): Boolean =
-        favoriteRepository.findByUserIdAndCsId(userId, csId) is FireResult.Success
+    fun isFavorite(userId: String, csId: String) = viewModelScope.launch {
+        _isFavorite.value = favoriteRepository.findByUserIdAndCsId(userId, csId) is FireResult.Success
+    }
+
+    /**
+     * 즐겨찾기 버튼 클릭 시 실행,
+     * */
+    fun updateFavorite(favoriteState: Boolean) {
+        _isFavorite.value = favoriteState
+    }
 
 }
