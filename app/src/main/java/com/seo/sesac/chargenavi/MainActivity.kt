@@ -69,6 +69,12 @@ class MainActivity : ComponentActivity() {
             StartApp()
         }
     }
+    override fun onRestart() {
+        super.onRestart()
+        setContent {
+            StartApp()
+        }
+    }
 
     // permission 얻은 이후 진행 할 코드듣 작성
     private val permissionListener = object : PermissionListener {
