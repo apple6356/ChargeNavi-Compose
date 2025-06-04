@@ -25,7 +25,7 @@ data class NavigationItem(
                 route = NavigationRoute.Favorite.routeName
             ),
             NavigationItem(
-                tabName = "마이",
+                tabName = "MY",
                 icon = Icons.Filled.Person,
                 route = NavigationRoute.MyPage.routeName
             ),

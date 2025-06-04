@@ -111,5 +111,6 @@ class MainViewModel(
     fun setCsInfo(csInfo: List<EvCsInfo>) {
         _csInfo.value = csInfo
     }
+
 }
 

@@ -1,38 +1,37 @@
 [versions]
-agp = "8.9.1"
+agp = "8.10.1"
 coilCompose = "3.1.0"
 converterGson = "2.11.0"
 gson = "2.11.0"
 kotlin = "2.1.0"
-coreKtx = "1.15.0"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 kotlinxSerializationJson = "1.8.0"
-lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.10.0"
-composeBom = "2025.02.00"
+lifecycleRuntimeKtx = "2.9.0"
+activityCompose = "1.10.1"
+composeBom = "2025.05.01"
 loggingInterceptor = "4.12.0"
 lottie = "3.1.0"
 naverMapCompose = "1.8.0"
 naverMapLocation = "21.0.2"
-navigationCompose = "2.8.7"
+navigationCompose = "2.9.0"
 okhttp = "4.12.0"
 playServicesLocation = "21.3.0"
 jetbrainsKotlinJvm = "2.1.0"
-lifecycleViewmodelCompose = "2.8.7"
+lifecycleViewmodelCompose = "2.9.0"
 appcompat = "1.7.0"
 material = "1.12.0"
-firebaseFirestoreKtx = "25.1.2"
+firebaseFirestoreKtx = "25.1.4"
 googlePlayServices = "4.4.2"
 comGoogleGmsGoogleServicesGradlePlugin = "4.4.2"
-firebaseBom = "33.9.0"
-firebaseCommon = "21.0.0"
-firebaseFirestore = "25.1.2"
-datastorePreferences = "1.1.2"
-securityCrypto = "1.1.0-alpha06"
+firebaseBom = "33.14.0"
+firebaseFirestore = "25.1.4"
+datastorePreferences = "1.1.7"
+securityCrypto = "1.1.0-alpha07"
 tedpermissionNormal = "3.4.2"
-firebaseMessagingKtx = "24.1.0"
+firebaseMessagingKtx = "24.1.1"
 
 
 [libraries]
@@ -70,7 +69,6 @@ material = { group = "com.google.android.material", name = "material", version.r
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 com-google-gms-google-services-gradle-plugin = { group = "com.google.gms.google-services", name = "com.google.gms.google-services.gradle.plugin", version.ref = "comGoogleGmsGoogleServicesGradlePlugin" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
-firebase-common = { group = "com.google.firebase", name = "firebase-common", version.ref = "firebaseCommon" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
