@@ -5,12 +5,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,17 +32,20 @@ import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.data.entity.UserInfo
+import kotlinx.coroutines.launch
 
 /**
  * 즐겨찾기 화면,
  * 즐겨찾기 된 충전소 목록을 보여주고,
  * 찾는 충전소의 중요 정보(이름, 주소, 단자 타입, 충전 가능 상태 등)를 목록에서 보여 준다
  * */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteScreen(
     navController: NavController,
     favoriteViewModel: FavoriteViewModel = viewModel(),
-    userViewModel: UserViewModel = viewModel(factory = userViewModelFactory)
+    userViewModel: UserViewModel = viewModel(factory = userViewModelFactory),
+    bottomSheetScaffoldState: BottomSheetScaffoldState
 ) {
 
     // 유저 정보 상태
@@ -54,6 +64,10 @@ fun FavoriteScreen(
         userInfo.id?.let { favoriteViewModel.getFavoriteList(it) }
     }
 
+
+    // 바텀 시트 코루틴 스코프
+    val bottomSheetScope = rememberCoroutineScope()
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -65,6 +79,21 @@ fun FavoriteScreen(
                     end = 10.dp
                 )
         ) {
+            // 뒤로가기 버튼
+            IconButton(onClick = {
+                if (navController.previousBackStackEntry != null) {
+                    navController.popBackStack()
+                } else {
+                    bottomSheetScope.launch {
+                        bottomSheetScaffoldState.bottomSheetState.hide()
+                    }
+                }
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = null
+                )
+            }
 
             Text(
                 text = stringResource(R.string.favorite_text),

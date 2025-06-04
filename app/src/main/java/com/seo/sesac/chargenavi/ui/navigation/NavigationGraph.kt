@@ -8,9 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.seo.sesac.chargenavi.ui.screen.favorite.FavoriteScreen
 import com.seo.sesac.chargenavi.ui.screen.main.DetailScreen
-import com.seo.sesac.chargenavi.ui.screen.main.MainScreen
 import com.seo.sesac.chargenavi.ui.screen.main.AllReviewScreen
-import com.seo.sesac.chargenavi.ui.screen.main.NaverMapScreen
 import com.seo.sesac.chargenavi.ui.screen.main.ReviewWriteScreen
 import com.seo.sesac.chargenavi.ui.screen.main.SearchScreen
 import com.seo.sesac.chargenavi.ui.screen.mypage.EditProfileScreen
@@ -34,14 +32,14 @@ fun NavGraphBuilder.mainNavGraph(
         route = "main_route"
     ) {
         /* 메인 화면 */
-        composable(route = NavigationRoute.Main.routeName) {
+/*        composable(route = NavigationRoute.Main.routeName) {
             MainScreen(navController, bottomSheetScaffoldState, mainViewModel = mainViewModel)
-        }
+        }*/
         /* 충전소 상세 화면, 충전소 id를 넘긴다 */
         composable(route = "${NavigationRoute.Detail.routeName}/{csId}") {
             val csId = it.arguments?.getString("csId")
             if (csId != null) {
-                DetailScreen(navController, mainViewModel = mainViewModel, csId = csId)
+                DetailScreen(navController, mainViewModel = mainViewModel, csId = csId, bottomSheetScaffoldState = bottomSheetScaffoldState)
             }
         }
         /* 검색 화면 */
@@ -66,7 +64,11 @@ fun NavGraphBuilder.mainNavGraph(
     }
 }
 
-fun NavGraphBuilder.myPageNavGraph(navController: NavController) {
+@OptIn(ExperimentalMaterial3Api::class)
+fun NavGraphBuilder.myPageNavGraph(
+    navController: NavController,
+    bottomSheetScaffoldState: BottomSheetScaffoldState
+) {
 
     navigation(
         startDestination = NavigationRoute.MyPage.routeName,
@@ -74,7 +76,7 @@ fun NavGraphBuilder.myPageNavGraph(navController: NavController) {
     ) {
         /* 마이 페이지 화면 */
         composable(route = NavigationRoute.MyPage.routeName) {
-            MyPageScreen(navController)
+            MyPageScreen(navController = navController, bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
         /* 프로필 수정 화면 */
         composable(route = NavigationRoute.EditProfile.routeName) {
@@ -91,7 +93,11 @@ fun NavGraphBuilder.myPageNavGraph(navController: NavController) {
     }
 }
 
-fun NavGraphBuilder.favoriteNavGraph(navController: NavController) {
+@OptIn(ExperimentalMaterial3Api::class)
+fun NavGraphBuilder.favoriteNavGraph(
+    navController: NavController,
+    bottomSheetScaffoldState: BottomSheetScaffoldState
+) {
 
     navigation(
         startDestination = NavigationRoute.Favorite.routeName,
@@ -99,7 +105,7 @@ fun NavGraphBuilder.favoriteNavGraph(navController: NavController) {
     ) {
         /* 즐겨찾기 화면 */
         composable(route = NavigationRoute.Favorite.routeName) {
-            FavoriteScreen(navController)
+            FavoriteScreen(navController = navController, bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
     }
 }

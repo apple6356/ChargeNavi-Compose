@@ -39,6 +39,7 @@ import com.naver.maps.map.compose.rememberFusedLocationSource
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.LocationUtils
 import com.seo.sesac.chargenavi.common.showToast
+import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.EvCsInfo
@@ -156,6 +157,11 @@ fun NaverMapScreen(
                             if (bottomSheetScaffoldState.bottomSheetState.isVisible) {
                                 bottomSheetScaffoldState.bottomSheetState.hide()
                             } else {
+                                // 마커 클릭 시 DetailScreen bottom sheet 생성
+                                navController.navigate("${NavigationRoute.Detail.routeName}/${csId}") {
+                                    popUpTo(navController.graph.id)
+                                }
+
                                 bottomSheetScaffoldState.bottomSheetState.expand()
                             }
                         }

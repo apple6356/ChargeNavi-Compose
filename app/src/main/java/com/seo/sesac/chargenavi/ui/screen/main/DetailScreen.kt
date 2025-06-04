@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,16 +53,16 @@ import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
-import com.seo.sesac.data.common.RestResult
 import com.seo.sesac.data.entity.EvCsInfo
-import com.seo.sesac.data.entity.Review
 import com.seo.sesac.data.entity.UserInfo
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 /**
  * 충전소에 대한 상세 정보 화면
  * */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
     navController: NavController,
@@ -67,7 +70,8 @@ fun DetailScreen(
     favoriteViewModel: FavoriteViewModel = viewModel(),
     userViewModel: UserViewModel = viewModel(factory = userViewModelFactory),
     reviewViewModel: ReviewViewModel = viewModel(),
-    csId: String
+    csId: String,
+    bottomSheetScaffoldState: BottomSheetScaffoldState
 ) {
 
     Log.e("DetailScreen", "csId : $csId")
@@ -120,6 +124,9 @@ fun DetailScreen(
         mutableStateOf((reviewListState as? FireResult.Success)?.data?.sortedByDescending { it.createTime } ?: emptyList())
     }
 
+    // 바텀 시트 코루틴 스코프
+    val bottomSheetScope = rememberCoroutineScope()
+
     // 스크롤 상태
     val scrollState = rememberScrollState()
 
@@ -145,7 +152,13 @@ fun DetailScreen(
 
                 // 뒤로가기 버튼
                 IconButton(onClick = {
-                    navController.popBackStack()
+                    if (navController.previousBackStackEntry != null) {
+                        navController.popBackStack()
+                    } else {
+                        bottomSheetScope.launch {
+                            bottomSheetScaffoldState.bottomSheetState.hide()
+                        }
+                    }
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,

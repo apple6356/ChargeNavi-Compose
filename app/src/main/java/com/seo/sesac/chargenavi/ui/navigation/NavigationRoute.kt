@@ -13,5 +13,4 @@ sealed class NavigationRoute(val routeName : String) {
     data object Settings : NavigationRoute("Settings")
 
     data object Favorite : NavigationRoute("Favorite")
-    data object FavoriteList : NavigationRoute("FavoriteList")
 }
