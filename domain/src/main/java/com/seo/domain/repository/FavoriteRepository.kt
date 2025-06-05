@@ -1,4 +1,4 @@
-package com.seo.sesac.domain.repository
+package com.seo.domain.repository
 
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.data.entity.Favorite

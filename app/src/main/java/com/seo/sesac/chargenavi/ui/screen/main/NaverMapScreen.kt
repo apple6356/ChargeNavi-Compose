@@ -1,6 +1,5 @@
 package com.seo.sesac.chargenavi.ui.screen.main
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +36,7 @@ import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.compose.rememberFusedLocationSource
 import com.seo.sesac.chargenavi.R
+import com.seo.sesac.chargenavi.common.ChargeNaviApplication
 import com.seo.sesac.chargenavi.common.LocationUtils
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
@@ -53,7 +53,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun NaverMapScreen(
     navController: NavController,
-    context: Context,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     mainViewModel: MainViewModel
 ) {
@@ -71,7 +70,7 @@ fun NaverMapScreen(
         mutableStateOf(LatLng(37.5666, 126.979))
     }
 
-    val locationUtils = LocationUtils(context)
+    val locationUtils = LocationUtils(ChargeNaviApplication.getApplication())
 
     // 현재 위치 좌표 가져오기
     if (currentLatLng == LatLng(37.5666, 126.979)) {

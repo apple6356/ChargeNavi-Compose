@@ -21,8 +21,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,14 +41,11 @@ import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.ChangedStarRatingBar
 import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.ui.screen.common.dividerModifier
-import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.chargenavi.viewmodel.ReviewViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
-import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
 import com.seo.sesac.data.common.FireResult
 import com.seo.sesac.data.entity.UserInfo
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * 리뷰 작성 화면
@@ -56,7 +53,6 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun ReviewWriteScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel(factory = mainViewModelFactory),
     userViewModel: UserViewModel = viewModel(factory = userViewModelFactory),
     reviewViewModel: ReviewViewModel = viewModel(),
     csId: String
@@ -69,7 +65,7 @@ fun ReviewWriteScreen(
 
     // 별점
     var rating by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
 
     // 유저 정보 상태

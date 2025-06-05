@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,7 +20,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,13 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.seo.sesac.data.entity.Review
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.ui.screen.main.list.ReviewListScreen
 import com.seo.sesac.chargenavi.viewmodel.ReviewViewModel
 import com.seo.sesac.data.common.FireResult
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * 충전소의 모든 리뷰 보여주는 화면

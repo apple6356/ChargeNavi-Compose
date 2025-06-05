@@ -18,10 +18,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,9 +29,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.common.NaverOAuth
+import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 import com.seo.sesac.chargenavi.viewmodel.UserViewModel
 import com.seo.sesac.chargenavi.viewmodel.factory.userViewModelFactory
+import kotlinx.coroutines.launch
 
 /**
  * 시작 화면, 메인 화면
@@ -46,8 +48,6 @@ fun MainScreen(
     userViewModel: UserViewModel = viewModel(factory = userViewModelFactory)
 ) {
 
-    val context = LocalContext.current
-
     LaunchedEffect(Unit) {
         if (NaverOAuth.isLoggedIn()) {
             Log.e("NaverOAuth", "로그인 된 상태")
@@ -61,12 +61,15 @@ fun MainScreen(
         }
     }
 
+    // 바텀 시트 코루틴 스코프
+    val bottomSheetScope = rememberCoroutineScope()
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
 
         // NaverMap
-        NaverMapScreen(navController, context, bottomSheetScaffoldState, mainViewModel)
+        NaverMapScreen(navController, bottomSheetScaffoldState, mainViewModel)
 
         Column(
             modifier = Modifier
@@ -86,7 +89,14 @@ fun MainScreen(
                         vertical = 8.dp, horizontal = 8.dp
                     )
                     .clickable { // 클릭 시 검색 창으로 이동
-//                        navController.navigate(NavigationRoute.Search.routeName)
+                        bottomSheetScope.launch {
+                            if (!bottomSheetScaffoldState.bottomSheetState.isVisible) {
+                                bottomSheetScaffoldState.bottomSheetState.expand()
+                            }
+                            navController.navigate(NavigationRoute.Search.routeName) {
+                                popUpTo(navController.graph.id)
+                            }
+                        }
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) { // 검색 아이콘

@@ -1,7 +1,6 @@
 package com.seo.sesac.data.apimodule
 
 import com.seo.sesac.data.entity.DirectionEntity
-import com.seo.sesac.data.entity.GeoCodeEntity
 import com.seo.sesac.data.entity.ReverseGeoCodeEntity
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -16,13 +15,6 @@ interface NaverService {
         @Query("coords") coords: String,
         @Query("output") output: String = "json"
     ): ReverseGeoCodeEntity
-
-    @GET("map-geocode/v2/geocode")
-    suspend fun getNaverGeoCode(
-        @Header("X-NCP-APIGW-API-KEY-ID") apiKeyId: String,
-        @Header("X-NCP-APIGW-API-KEY") apiKey: String,
-        @Query("query") query: String
-    ): GeoCodeEntity
 
     /**
      * query 설명: https://api.ncloud-docs.com/docs/ai-naver-mapsdirections-driving 참고

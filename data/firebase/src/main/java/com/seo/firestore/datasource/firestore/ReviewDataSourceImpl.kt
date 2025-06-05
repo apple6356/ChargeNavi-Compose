@@ -5,6 +5,9 @@ import com.seo.sesac.data.entity.Review
 import com.seo.firestore.common.FirestoreCollectionFilter
 import kotlinx.coroutines.tasks.await
 
+/**
+ * firestore review datasource
+ * */
 class ReviewDataSourceImpl {
 
     suspend fun create(data: Review) = runCatching {
@@ -12,14 +15,9 @@ class ReviewDataSourceImpl {
         val result = addTask.get().await()
 
         val reviewInfo = result.toObject(Review::class.java) as Review
-        println("create review: ${reviewInfo}")
         FireResult.Success(reviewInfo)
     }.getOrElse {
         FireResult.Failure(Exception("리뷰 저장 중 오류 발생"))
-    }
-
-    fun delete() {
-        TODO("Not yet implemented")
     }
 
     suspend fun findByUserId(userId: String) = runCatching {
@@ -52,10 +50,6 @@ class ReviewDataSourceImpl {
         FireResult.Failure(Exception("데이터 베이스 문제 발생: ${it.message}"))
     }
 
-    fun findByCsIdOrderByLike() {
-        TODO("Not yet implemented")
-    }
-
     suspend fun deleteReview(id: String) = runCatching {
         val resultTask = FirestoreCollectionFilter.getReviewCollection()
             .whereEqualTo("id", id)
@@ -70,6 +64,4 @@ class ReviewDataSourceImpl {
     }.getOrElse {
         FireResult.Failure(Exception("리뷰 삭제 중 오류 발생: ${it.message}"))
     }
-
-    fun likeUp(id: String) = runCatching {  }
 }

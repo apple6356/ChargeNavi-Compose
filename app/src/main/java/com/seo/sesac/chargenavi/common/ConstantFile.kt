@@ -1,5 +1,11 @@
 package com.seo.sesac.chargenavi.common
 
+import com.seo.sesac.chargenavi.BuildConfig
+
+const val apiKey = BuildConfig.API_KEY
+const val naverClientId = BuildConfig.NAVER_CLIENT_ID
+const val naverClientSecret = BuildConfig.NAVER_CLIENT_SCERET
+
 // Default Memory Size = 0.15 ~ 0.2
 const val COIL_MEMORY_CACHE_SIZE_PERCENT = 0.1
 

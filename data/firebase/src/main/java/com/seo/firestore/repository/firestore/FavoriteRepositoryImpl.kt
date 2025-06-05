@@ -2,8 +2,11 @@ package com.seo.firestore.repository.firestore
 
 import com.seo.firestore.datasource.firestore.FavoriteDataSourceImpl
 import com.seo.sesac.data.entity.Favorite
-import com.seo.sesac.domain.repository.FavoriteRepository
+import com.seo.domain.repository.FavoriteRepository
 
+/**
+ * firestore favorite repository
+ * */
 class FavoriteRepositoryImpl(private val favoriteDataSourceImpl: FavoriteDataSourceImpl) :
     FavoriteRepository<Favorite> {
 

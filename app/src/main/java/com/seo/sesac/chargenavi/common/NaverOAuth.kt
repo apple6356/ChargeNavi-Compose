@@ -6,7 +6,6 @@ import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
-import com.seo.sesac.data.entity.UserInfo
 
 /**
  * Naver Login 위한 파일
@@ -53,11 +52,17 @@ object NaverOAuth {
         return !accessToken.isNullOrEmpty()
     }
 
+    /**
+    * 네이버 로그 아웃
+    * */
     fun logout() {
         NaverIdLoginSDK.logout()
         showToast("로그아웃 되었습니다.")
     }
 
+    /**
+     * 네이버 프로필을 가져온다
+     * */
     fun getProfile(onSuccess: (NidProfileResponse) -> Unit) {
         NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
             override fun onSuccess(result: NidProfileResponse) {

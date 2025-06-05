@@ -42,7 +42,6 @@
             android:name=".MainActivity"
             android:launchMode="singleInstance"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.ChargeNavi">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
