@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.data.common.FireResult
 import com.seo.firestore.datasource.firestore.FavoriteDataSourceImpl
 import com.seo.firestore.repository.firestore.FavoriteRepositoryImpl
@@ -58,7 +57,7 @@ class FavoriteViewModel(
 
             val result = favoriteRepository.create(favorite)
             if (result is FireResult.Success) {
-                Log.e("fvm addFavorite", "result: ${result}")
+                Log.e("fvm addFavorite", "result: $result")
             } else {
                 Log.e("fvm addFavorite error", "${(result as FireResult.Failure).exception}")
             }
@@ -71,7 +70,7 @@ class FavoriteViewModel(
     fun deleteFavorite(userId: String, csId: String) {
         viewModelScope.launch {
             val result = favoriteRepository.delete(userId, csId)
-            Log.e("fvm deleteFavorite", "${result}")
+            Log.e("fvm deleteFavorite", "$result")
         }
     }
 
@@ -114,33 +113,12 @@ class FavoriteViewModel(
     }
 
     /**
-     * csId 가 같은 충전소 정보를 Map 으로 그룹화
-     * *//*fun findByCsId(csId: String): Map<Int, List<EvCsInfo>> =
-        favoriteCsList.value.let { result ->
-            Log.e("FVM findCSByCsId", "$result")
-            if (result is RestResult.Success) {
-                Log.e("Charging Station", "${result.data.groupBy { it.csId }}")
-                result.data
-                    .groupBy { it.csId }
-                    .filter { it.key == csId.toInt() }
-            } else {
-                Log.e("FVM findCSByCsId", "오류 발생")
-                emptyMap()
-            }
-        }*/
-
-    /**
      * findByUserIdAndCsId 결과값이 Success true 아니면 false 리턴하는 함
      * */
     fun isFavorite(userId: String, csId: String) = viewModelScope.launch {
         _isFavorite.value = favoriteRepository.findByUserIdAndCsId(userId, csId) is FireResult.Success
     }
 
-    /**
-     * 즐겨찾기 버튼 클릭 시 실행,
-     * */
-    fun updateFavorite(favoriteState: Boolean) {
-        _isFavorite.value = favoriteState
-    }
+
 
 }

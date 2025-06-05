@@ -3,26 +3,6 @@ package com.seo.sesac.chargenavi.common
 import androidx.compose.ui.graphics.Color
 import com.seo.sesac.chargenavi.R
 
-/** 충전 단자 타입 */
-val cpTpMap = mapOf(
-    "1" to "B타입(5핀)",
-    "2" to "C타입(5핀)",
-    "3" to "BC타입(5핀)",
-    "4" to "BC타입(7핀)",
-    "5" to "DC차데모",
-    "6" to "AC3상",
-    "7" to "DC콤보",
-    "8" to "DC차데모+DC콤보",
-    "9" to "DC차데모+AC3상",
-    "10" to "DC차데모+DC콤보, AC3상"
-)
-
-/** 충전 속도 */
-val chargeTpMap = mapOf(
-    "1" to "완속",
-    "2" to "급속"
-)
-
 /** 충전기 상태 */
 val cpStatMap = mapOf(
     "0" to "상태확인불가",
@@ -64,9 +44,9 @@ fun getStatusColor(cpStat: String): Color =
  * */
 fun getChargeTypeString(icon: Int) =
     when(icon) {
-        iconList.get(0) -> "DC차데모"
-        iconList.get(1) -> "AC3상"
-        iconList.get(2) -> "DC콤보"
+        iconList[0] -> "DC차데모"
+        iconList[1] -> "AC3상"
+        iconList[2] -> "DC콤보"
         else -> "완속"
     }
 

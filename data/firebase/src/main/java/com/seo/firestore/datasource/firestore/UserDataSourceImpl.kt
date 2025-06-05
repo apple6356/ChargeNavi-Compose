@@ -18,8 +18,14 @@ class UserDataSourceImpl {
 
         return if (user?.id.equals("-1")) {
             // 신규 유저 등록
-            val newUser = FirestoreCollectionFilter.getUserFirestoreCollection().add(data.toMap()).await().get().result.data as UserInfo
-            FireResult.Success(newUser)
+            val newUserRef = FirestoreCollectionFilter.getUserFirestoreCollection().add(data.toMap()).await().get().await()
+            val newUser = newUserRef.toObject(UserInfo::class.java)
+
+            if (newUser != null) {
+                FireResult.Success(newUser)
+            } else {
+                FireResult.Failure(Exception("유저 정보를 찾을 수 없습니다."))
+            }
         } else {
             // 기존 유저 로그인
             FireResult.Success(user!!)

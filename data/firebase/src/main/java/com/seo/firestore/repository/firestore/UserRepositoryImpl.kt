@@ -3,7 +3,7 @@ package com.seo.firestore.repository.firestore
 import com.seo.firestore.datasource.firestore.UserDataSourceImpl
 import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
-import com.seo.sesac.domain.repository.UserRepository
+import com.seo.domain.repository.UserRepository
 
 /**
  * firestore user repository

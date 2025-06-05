@@ -69,7 +69,7 @@ class ReviewViewModel(
 
             if (result is FireResult.Success) {
                 _reviewList.value = result
-                Log.e("RVM", "findByCsIdOrderByCreateTime : ${result}")
+                Log.e("RVM", "findByCsIdOrderByCreateTime : $result")
             } else {
                 Log.e("RVM", "findByCsIdOrderByCreateTime : ${(result as FireResult.Failure).exception}")
             }
@@ -85,9 +85,9 @@ class ReviewViewModel(
 
             if (result is FireResult.Success) {
                 _reviewList.value = result
-                Log.e("RVM", "findByUserId : ${result}")
+                Log.e("RVM", "findByUserId : $result")
             } else {
-                Log.e("RVM", "findByUserId : ${result}")
+                Log.e("RVM", "findByUserId : $result")
 
             }
         }
@@ -102,9 +102,9 @@ class ReviewViewModel(
 
             if (result is FireResult.Success) {
                 _reviewList.value = reviewRepository.findByUserId(review.userId)
-                Log.e("RVM", "deleteReview : ${result}")
+                Log.e("RVM", "deleteReview : $result")
             } else {
-                Log.e("RVM", "deleteReview : ${result}")
+                Log.e("RVM", "deleteReview : $result")
 
             }
         }

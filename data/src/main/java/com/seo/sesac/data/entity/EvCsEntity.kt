@@ -4,12 +4,12 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 data class EvCsResponse(
-    @SerializedName("currentCount") val currentCount: Int,
-    @SerializedName("data") val data: List<EvCsInfo>,
-    @SerializedName("matchCount") val matchCount: Int,
-    @SerializedName("page") val page: Int,
-    @SerializedName("perPage") val perPage: Int,
-    @SerializedName("totalCount") val totalCount: Int
+    val currentCount: Int,
+    val data: List<EvCsInfo>,
+    val matchCount: Int,
+    val page: Int,
+    val perPage: Int,
+    val totalCount: Int
 )
 
 @Serializable

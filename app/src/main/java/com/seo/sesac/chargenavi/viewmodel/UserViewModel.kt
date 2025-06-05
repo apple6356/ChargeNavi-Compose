@@ -9,7 +9,7 @@ import com.seo.sesac.data.entity.UserInfo
 import com.seo.sesac.data.common.FireResult
 import com.seo.firestore.repository.firestore.UserRepositoryImpl
 import com.seo.sesac.chargenavi.common.showToast
-import com.seo.sesac.domain.usecase.UserUseCase
+import com.seo.domain.usecase.UserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -27,10 +27,6 @@ class UserViewModel(
         MutableStateFlow<FireResult<UserInfo>>(FireResult.DummyConstructor)
     val userInfo get() = _userInfo.asStateFlow()
 
-    private val _isLoggedIn =
-        MutableStateFlow(false)
-    val isLoggedIn get() = _isLoggedIn.asStateFlow()
-
     /**
      * naver login 메소드, 새로 로그인한 id면 유저 정보 저장
      * */
@@ -47,7 +43,7 @@ class UserViewModel(
                             profileImage = user.profile?.profileImage
                         )
 
-                        Log.e("naverLogin in viewModel", "${loginUserInfo}")
+                        Log.e("naverLogin in viewModel", "$loginUserInfo")
 
                         // firestore 저장
                         _userInfo.value = userUseCase.loginNaverUserClass(loginUserInfo)
@@ -75,10 +71,6 @@ class UserViewModel(
     fun logoutNaver() {
         _userInfo.value = FireResult.DummyConstructor
         NaverOAuth.logout()
-    }
-
-    fun isLoggedIn() {
-        _isLoggedIn.value = NaverOAuth.isLoggedIn()
     }
 
     /**

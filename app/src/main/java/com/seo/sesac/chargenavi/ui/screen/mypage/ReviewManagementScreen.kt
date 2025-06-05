@@ -68,9 +68,9 @@ fun ReviewManagementScreen(
 
     // 리뷰 목록 가져오기
     LaunchedEffect(key1 = reviewViewModel.reviewList) {
-        reviewViewModel.reviewList.collectLatest {
-            if (it is FireResult.Success) {
-                reviewList = it.data.sortedByDescending { // 최신순 정렬
+        reviewViewModel.reviewList.collectLatest { result ->
+            if (result is FireResult.Success) {
+                reviewList = result.data.sortedByDescending { // 최신순 정렬
                     it.createTime
                 }
             }

@@ -7,7 +7,6 @@ import kotlinx.coroutines.tasks.await
 
 /**
  * firestore favorite datasource
- * 25-02-17 수정: 즐겨찾기 시 충전소의 일부 정보 함께 저장
  * */
 class FavoriteDataSourceImpl {
 
@@ -40,7 +39,7 @@ class FavoriteDataSourceImpl {
             .whereEqualTo("csId", csId)
             .get().await()
 
-        if (!resultTask.isEmpty()) {
+        if (!resultTask.isEmpty) {
             FirestoreCollectionFilter.getFavoriteFirestoreCollection().document(resultTask.documents.first().id).delete()
             FireResult.Success(true)
         } else {

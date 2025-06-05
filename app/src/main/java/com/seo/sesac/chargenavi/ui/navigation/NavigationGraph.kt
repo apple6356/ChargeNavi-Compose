@@ -17,9 +17,6 @@ import com.seo.sesac.chargenavi.ui.screen.mypage.ReviewManagementScreen
 import com.seo.sesac.chargenavi.ui.screen.mypage.SettingsScreen
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
 
-/**
- * viewModel 추가
- * */
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.mainNavGraph(
     navController: NavController,
@@ -31,10 +28,6 @@ fun NavGraphBuilder.mainNavGraph(
         startDestination = NavigationRoute.Main.routeName,
         route = "main_route"
     ) {
-        /* 메인 화면 */
-/*        composable(route = NavigationRoute.Main.routeName) {
-            MainScreen(navController, bottomSheetScaffoldState, mainViewModel = mainViewModel)
-        }*/
         /* 충전소 상세 화면, 충전소 id를 넘긴다 */
         composable(route = "${NavigationRoute.Detail.routeName}/{csId}") {
             val csId = it.arguments?.getString("csId")
@@ -44,7 +37,7 @@ fun NavGraphBuilder.mainNavGraph(
         }
         /* 검색 화면 */
         composable(route = NavigationRoute.Search.routeName) {
-            SearchScreen(navController, mainViewModel = mainViewModel)
+            SearchScreen(navController, mainViewModel = mainViewModel, bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
         /* 리뷰 목록 화면 */
         composable(route = "${NavigationRoute.ReviewList.routeName}/{csId}/{userId}") {
@@ -58,7 +51,7 @@ fun NavGraphBuilder.mainNavGraph(
         composable(route = "${NavigationRoute.ReviewWrite.routeName}/{csId}") {
             val csId = it.arguments?.getString("csId")
             if (csId != null) {
-                ReviewWriteScreen(navController, mainViewModel = mainViewModel, csId = csId)
+                ReviewWriteScreen(navController, csId = csId)
             }
         }
     }

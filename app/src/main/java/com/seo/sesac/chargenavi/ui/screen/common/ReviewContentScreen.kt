@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -94,7 +93,7 @@ fun ReviewContentScreen(
                     // 좋아요 버튼
                     IconButton(
                         onClick = {
-                            if (reviewInfo.userId.equals(userId)) {
+                            if (reviewInfo.userId == userId) {
                                 showToast(R.string.cannot_self_recommend.toString())
                             } else {
                                 likeState = !likeState

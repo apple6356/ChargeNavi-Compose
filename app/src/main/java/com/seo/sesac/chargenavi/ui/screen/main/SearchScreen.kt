@@ -10,6 +10,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,21 +20,20 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.seo.sesac.chargenavi.R
 import com.seo.sesac.chargenavi.ui.screen.main.list.SearchListScreen
 import com.seo.sesac.chargenavi.viewmodel.MainViewModel
-import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
+import kotlinx.coroutines.launch
 
 /**
  * 검색 화면,
@@ -40,16 +41,21 @@ import com.seo.sesac.chargenavi.viewmodel.factory.mainViewModelFactory
  * 2. 네이버 검색 API (지역)을 검색 내용의 주소를 받아와 해당 지역의 충전소 검색 결과 Marker 생성
  * 3. 검색 결과가 없다면 검색 결과가 없다는 것을 알림
  * */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     navController: NavController,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    bottomSheetScaffoldState: BottomSheetScaffoldState
 ) {
 
     // 검색 키워드
     var searchKeyword by remember {
         mutableStateOf("")
     }
+
+    // 바텀 시트 코루틴 스코프
+    val bottomSheetScope = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -79,7 +85,14 @@ fun SearchScreen(
                     leadingIcon = { // 뒤로가기 버튼 추가
                         IconButton(
                             onClick = {
-                                navController.popBackStack()
+//                                navController.popBackStack()
+                                if (navController.previousBackStackEntry != null) {
+                                    navController.popBackStack()
+                                } else {
+                                    bottomSheetScope.launch {
+                                        bottomSheetScaffoldState.bottomSheetState.hide()
+                                    }
+                                }
                             }
                         ) {
                             Icon(

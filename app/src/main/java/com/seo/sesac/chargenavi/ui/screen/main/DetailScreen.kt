@@ -15,6 +15,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,10 +30,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,7 +43,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.naver.maps.geometry.LatLng
 import com.seo.sesac.chargenavi.R
+import com.seo.sesac.chargenavi.common.LocationUtils
+import com.seo.sesac.chargenavi.common.showToast
 import com.seo.sesac.chargenavi.ui.navigation.NavigationRoute
 import com.seo.sesac.chargenavi.ui.screen.common.ChargeInfoScreen
 import com.seo.sesac.chargenavi.ui.screen.common.CircularProgress
@@ -106,8 +112,8 @@ fun DetailScreen(
         // 현재 충전소 리뷰 정보
         reviewViewModel.findByCsIdOrderByCreateTime(csId)
 
-        mainViewModel.csInfo.collectLatest {
-            csInfo = it
+        mainViewModel.csInfo.collectLatest { csInfoList ->
+            csInfo = csInfoList
                 .groupBy { it.csId }
                 .filter { it.key == csId.toInt() }
                 .values
@@ -129,6 +135,27 @@ fun DetailScreen(
 
     // 스크롤 상태
     val scrollState = rememberScrollState()
+
+    // 현재 위치 (기본 값 서울 시청)
+    var currentLatLng by rememberSaveable {
+        mutableStateOf(LatLng(37.5666, 126.979))
+    }
+
+    val locationUtils = LocationUtils(LocalContext.current)
+
+    // 현재 위치 좌표 가져오기
+    if (currentLatLng == LatLng(37.5666, 126.979)) {
+        locationUtils.getCurrentLocation {
+            if (it != null) {
+                currentLatLng = LatLng(it.latitude, it.longitude)
+
+                // 현재 좌표를 주소로 변환
+                mainViewModel.convertCoordsToAddress(currentLatLng.latitude, currentLatLng.longitude)
+            } else {
+                showToast(R.string.current_location_not_found.toString())
+            }
+        }
+    }
 
     if (csInfo.isEmpty()) {
         CircularProgress()
@@ -222,6 +249,26 @@ fun DetailScreen(
                         text = csInfo.first().address,
                         fontSize = 13.sp
                     )
+                }
+
+                val goalLatLng = csInfo.first().let { LatLng(it.latitude.toDouble(), it.longitude.toDouble()) }
+
+                // 경로 보기
+                TextButton(
+                    onClick = {
+                        val start = "${currentLatLng.longitude},${currentLatLng.latitude}"
+                        val goal = "${goalLatLng.longitude},${goalLatLng.latitude}"
+                        mainViewModel.getRoute(start, goal)
+                        bottomSheetScope.launch {
+                            bottomSheetScaffoldState.bottomSheetState.partialExpand()
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.LocationOn,
+                        contentDescription = null
+                    )
+                    Text(stringResource(R.string.route_guide))
                 }
 
                 // 충전기 정보

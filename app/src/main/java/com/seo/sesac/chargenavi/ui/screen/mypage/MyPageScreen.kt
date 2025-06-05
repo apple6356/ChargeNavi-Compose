@@ -72,16 +72,13 @@ fun MyPageScreen(
     val bottomSheetScope = rememberCoroutineScope()
 
     Box(
-modifier = Modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(
-                start = 10.dp,
-                end = 10.dp,
-                top = 20.dp
+                start = 10.dp, end = 10.dp, top = 20.dp
             )
     ) {
-        Column {
-            // 뒤로가기 버튼
+        Column { // 뒤로가기 버튼
             IconButton(onClick = {
                 if (navController.previousBackStackEntry != null) {
                     navController.popBackStack()
@@ -99,15 +96,12 @@ modifier = Modifier
 
             // 사용자 프로필
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // 프로필 사진
+                ) { // 프로필 사진
                     if ((userInfo.id != "-1")) {
                         ProfileImageItem(userInfo.profileImage.toString())
                     } else {
@@ -115,13 +109,11 @@ modifier = Modifier
                             painter = painterResource(R.drawable.image_user_default_profile_),
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .size(
+                            modifier = Modifier.size(
                                     70.dp
                                 )
                         )
                     }
-
 
 
                     // 닉네임
@@ -134,16 +126,13 @@ modifier = Modifier
                 }
 
                 IconButton(
-                    onClick = {
-                        // 설정 화면으로 이동
+                    onClick = { // 설정 화면으로 이동
                         navController.navigate(NavigationRoute.Settings.routeName)
-                    }
-                ) {
+                    }) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(30.dp)
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
@@ -153,31 +142,25 @@ modifier = Modifier
             )
 
             MenuCard(
-                title = stringResource(R.string.edit_profile_text),
-                onClick = {
+                title = stringResource(R.string.edit_profile_text), onClick = {
                     if (userInfo.id != "-1") {
                         navController.navigate(NavigationRoute.EditProfile.routeName)
                     }
-                }
-            )
+                })
 
             MenuCard(
-                title = stringResource(R.string.review_management_text),
-                onClick = {
+                title = stringResource(R.string.review_management_text), onClick = {
                     if (userInfo.id != "-1") {
                         navController.navigate(NavigationRoute.ReviewManagement.routeName)
                     }
-                }
-            )
+                })
 
             /** 로그인 로그아웃 버튼 */
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
-            ) {
-                // 로그인 시 로그아웃 버튼, 로그인 되어 있지 않을 시 로그인 버튼 출력
+            ) { // 로그인 시 로그아웃 버튼, 로그인 되어 있지 않을 시 로그인 버튼 출력
                 if (userInfo.id == "-1") { // naver login button
                     Image(
                         painter = painterResource(R.drawable.btn_naver_short_login),
@@ -185,8 +168,7 @@ modifier = Modifier
                         modifier = Modifier
                             .width(150.dp)
                             .padding(
-                                top = 10.dp,
-                                bottom = 10.dp
+                                top = 10.dp, bottom = 10.dp
                             )
                             .clickable { /* naver login */
                                 userViewModel.loginNaver(context)
@@ -200,8 +182,7 @@ modifier = Modifier
                         modifier = Modifier
                             .width(150.dp)
                             .padding(
-                                top = 10.dp,
-                                bottom = 10.dp
+                                top = 10.dp, bottom = 10.dp
                             )
                             .clickable { /* naver login */
                                 userViewModel.logoutNaver()
